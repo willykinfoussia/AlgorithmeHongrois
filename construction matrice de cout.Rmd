@@ -1,0 +1,56 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-03-22"
+---
+
+#génération de tous les clusters prédits et de toutes classes correspondant aux données : 
+```{r cleaning, include=FALSE}
+
+generer_tableau <- function(n, k) {
+  tableau <- matrix(sample(1:k, n * 2, replace = TRUE), ncol = 2)
+  return(tableau)
+}
+
+n <- 400 
+k <- 10   
+
+resultat <- generer_tableau(n, k)
+
+cost_matrix <- matrix(0, nrow = k, ncol = k)
+```
+
+#calcul de la matrice de coût par une fonction de comptage simple d'occurence cluster/classe :
+```{r cleaning, include=FALSE}
+for (i in 1:n) {
+  cluster <- resultat[i, 1]  
+  classe <- resultat[i, 2]   
+  cost_matrix[cluster, classe] <- cost_matrix[cluster, classe] + 1
+}
+
+# Normaliser la matrice de coût
+cost_matrix <- 1 - cost_matrix / n
+```
+
+
+#calcul de la matrice de coût par une distance euclidienne de la différence entre centroïde et moyenne de la classe : 
+```{r cleaning, include=FALSE}
+
+data <- read.csv("mean_data.csv")
+
+cost_matrix <- matrix(0, nrow = ncol(data), ncol = ncol(data))
+
+for (i in 1: ncol(data)) {
+  for (j in 11: 10+ncol(data)) {
+    cost_matrix[i,j-10]=dist(data[i,],data[j,])
+  }
+}
+
+```
+
+```{r cleaning, include=FALSE}
+# Afficher la matrice de coût
+print(cost_matrix)
+
+```
+
