@@ -10,6 +10,19 @@ library(Rcpp)
 sourceCpp("Hungarian.cpp")
 ```
 
+```{r}
+matrix_to_list <- function(matrix) {
+  # Split the matrix into a list of integer vectors by row
+  list_matrix <- split(matrix, row(matrix))
+
+  # Convert each element of the list to an integer vector
+  list_matrix <- lapply(list_matrix, as.integer)
+
+  return(list_matrix)
+}
+```
+
+
 
 #génération de tous les clusters prédits et de toutes classes correspondant aux données : 
 ```{r cleaning, include=FALSE}
@@ -73,10 +86,11 @@ matrice_gaussienne_normalisee <- pnorm(matrice_gaussienne)
 
 ```{r cleaning, include=FALSE}
 # Afficher la matrice de coût
-print(cost_matrix)
+hungarian_cost_matrix = matrix_to_list(cost_matrix)
+print(hungarian_cost_matrix)
 
-write.csv(cost_matrix, file = "cout_matrice.csv", row.names = FALSE)
-
+optimal_cost <- Hungarian(hungarian_cost_matrix)
+print(optimal_cost)
 ```
 
 # Compute Complexity
