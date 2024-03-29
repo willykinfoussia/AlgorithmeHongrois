@@ -4,12 +4,24 @@ output: html_document
 date: "2024-03-22"
 ---
 
+
+```{r}
+library(Rcpp)
+sourceCpp("Hungarian.cpp")
+```
+
+
 #génération de tous les clusters prédits et de toutes classes correspondant aux données : 
 ```{r cleaning, include=FALSE}
 
 generer_tableau <- function(n, k) {
   tableau <- matrix(sample(1:k, n * 2, replace = TRUE), ncol = 2)
   return(tableau)
+}
+
+generer_matrice <- function(n, k){
+  matrice <- replicate(n, sample(1:k, n, replace = TRUE), simplify = FALSE)
+  return(matrice)
 }
 
 n <- 400 
@@ -66,4 +78,19 @@ print(cost_matrix)
 write.csv(cost_matrix, file = "cout_matrice.csv", row.names = FALSE)
 
 ```
+
+# Compute Complexity
+
+```{r}
+times <- list()  # Initialize times as an empty list
+n_times <- 0
+
+for (n in seq(from = 10, to = 1000, by = 100)) {
+  cost_matrix <- generer_matrice(n, k)
+  timing <- system.time(total_cost <- Hungarian(cost_matrix))
+  n_times <- n_times + 1
+  times[[n_times]] <- timing["elapsed"]  # Append elapsed time to times list
+}
+```
+
 
