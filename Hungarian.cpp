@@ -475,7 +475,7 @@ int output_solution(const vector<vector<int>>& original_matrix, const vector<vec
 }
 
 // [[Rcpp::export]]
-int Hungarian(vector<vector<int>> matrix, bool allow_negatives = true){
+int Hungarian(vector<vector<int>> matrix, bool verbose = false, bool allow_negatives = true){
 
     vector<vector<int>> original_matrix;
     copy_matrix(matrix, original_matrix);
@@ -498,8 +498,10 @@ int Hungarian(vector<vector<int>> matrix, bool allow_negatives = true){
     // Array for the augmenting path algorithm
     vector<vector<int>> path (sz+1, vector<int>(2, 0));
 
-    print(matrix);
-    print("----------");
+    if(verbose){
+        print(matrix);
+        print("----------");
+    }
 
     bool done = false;
     int step = 1;
@@ -507,45 +509,63 @@ int Hungarian(vector<vector<int>> matrix, bool allow_negatives = true){
         switch (step) {
             case 1:
                 step1(matrix, step);
-                print(matrix);
-                print("----------Step : ", 1);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 1);
+                }
                 break;
             case 2:
                 step2(matrix, M, RowCover, ColCover, step);
-                print(matrix);
-                print("----------Step : ", 2);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 2);
+                }
                 break;
             case 3:
                 step3(M, ColCover, step);
-                print(matrix);
-                print("----------Step : ", 3);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 3);
+                }
                 break;
             case 4:
                 step4(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step);
-                print(matrix);
-                print("----------Step : ", 4);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 4);
+                }
                 break;
             case 5:
                 step5(path, path_row_0, path_col_0, M, RowCover, ColCover, step);
-                print(matrix);
-                print("----------Step : ", 5);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 5);
+                }
                 break;
             case 6:
                 step6(matrix, RowCover, ColCover, step);
-                print(matrix);
-                print("----------Step : ", 6);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 6);
+                }
                 break;
             case 7:
                 for (auto& vec: M) {vec.resize(matrix.begin()->size());}
                 M.resize(matrix.size());
-                print(matrix);
-                print(M);
-                print("----------Step : ", 7);
+                if(true){
+                    print("Original Matrix:");
+                    print(matrix);
+                    print("Assignements Matrix:");
+                    print(M);
+                    print("----------Final Step : ", 7);
+                }
                 done = true;
                 break;
             default:
-                print(matrix);
-                print("----------Step : ", 8);
+                if(verbose){
+                    print(matrix);
+                    print("----------Step : ", 8);
+                }
                 done = true;
                 break;
         }
@@ -566,7 +586,7 @@ int main() //example of usage
     {315, 365, 366, 366, 366, 366}
     };
 
-    int cout = Hungarian(matrix);
-    cout << "Optimal: " << cout << endl;
+    int optimal_cost = Hungarian(matrix);
+    cout << optimal_cost << endl;
     return 0;
 }

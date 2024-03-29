@@ -4,12 +4,37 @@ output: html_document
 date: "2024-03-22"
 ---
 
+
+```{r}
+library(Rcpp)
+sourceCpp("Hungarian.cpp")
+```
+
+```{r}
+matrix_to_list <- function(matrix) {
+  # Split the matrix into a list of integer vectors by row
+  list_matrix <- split(matrix, row(matrix))
+
+  # Convert each element of the list to an integer vector
+  list_matrix <- lapply(list_matrix, as.integer)
+
+  return(list_matrix)
+}
+```
+
+
+
 #génération de tous les clusters prédits et de toutes classes correspondant aux données : 
 ```{r cleaning, include=FALSE}
 
 generer_tableau <- function(n, k) {
   tableau <- matrix(sample(1:k, n * 2, replace = TRUE), ncol = 2)
   return(tableau)
+}
+
+generer_matrice <- function(n, k){
+  matrice <- replicate(n, sample(1:k, n, replace = TRUE), simplify = FALSE)
+  return(matrice)
 }
 
 n <- 400 
@@ -61,9 +86,25 @@ matrice_gaussienne_normalisee <- pnorm(matrice_gaussienne)
 
 ```{r cleaning, include=FALSE}
 # Afficher la matrice de coût
-print(cost_matrix)
+hungarian_cost_matrix = matrix_to_list(cost_matrix)
+print(hungarian_cost_matrix)
 
-write.csv(cost_matrix, file = "cout_matrice.csv", row.names = FALSE)
-
+optimal_cost <- Hungarian(hungarian_cost_matrix)
+print(optimal_cost)
 ```
+
+# Compute Complexity
+
+```{r}
+times <- list()  # Initialize times as an empty list
+n_times <- 0
+
+for (n in seq(from = 10, to = 1000, by = 100)) {
+  cost_matrix <- generer_matrice(n, k)
+  timing <- system.time(total_cost <- Hungarian(cost_matrix))
+  n_times <- n_times + 1
+  times[[n_times]] <- timing["elapsed"]  # Append elapsed time to times list
+}
+```
+
 
