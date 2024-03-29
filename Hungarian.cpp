@@ -22,27 +22,56 @@
 #include <string>
 #include <type_traits>
 #include <vector>
-//#include <Rcpp.h>
+#include <Rcpp.h>
 
-//using namespace Rcpp;
+using namespace Rcpp;
 using namespace std;
     
-/* Utility function to print Matrix */
-template<template <typename, typename...> class Container,
-                   typename T,
-                   typename... Args>
-//disable for string, which is std::basic_string<char>, a container itself
-typename std::enable_if<!std::is_convertible<Container<T, Args...>, std::string>::value &&
-                        !std::is_constructible<Container<T, Args...>, std::string>::value,
-                            std::ostream&>::type
-operator<<(std::ostream& os, const Container<T, Args...>& con)
-{
-    os << " ";
-    for (auto& elem: con)
-        os << elem << " ";
+void print(const string& message) {
+    cout << message << endl;
+}
 
-    os << "\n";
-    return os;
+void print(int number) {
+    cout << number << endl;
+}
+
+template <typename T, typename U>
+void print(const T& message, const U& value) {
+    std::cout << message << value << std::endl;
+}
+
+template <typename T>
+void print(const vector<T>& my_vector){
+    for (const T& elem : my_vector) {
+        cout << elem << " ";
+    }
+    cout << endl;
+}
+
+template <typename T>
+void print(vector<vector<T>> matrix){
+    // Iterate through the rows
+    for (const auto& row : matrix) {
+        // Iterate through the columns in the current row
+        print(row);
+    }
+}
+
+template <typename T, typename U>
+void print(vector<pair<T, U>> pairs){
+    for (const auto& p : pairs) {
+        cout << "(" << p.first << ", " << p.second << ")" << endl;
+    }
+}
+
+void copy_matrix(const std::vector<std::vector<int>>& src, std::vector<std::vector<int>>& dst) {
+    dst.clear(); // Effacer le contenu de la matrice de destination
+
+    // Copier les lignes de la matrice source vers la matrice de destination
+    for (const auto& row : src) {
+        std::vector<int> copied_row(row.begin(), row.end());
+        dst.push_back(copied_row);
+    }
 }
 
 /* Handle negative elements if present. If allowed = true, add abs(minval) to 
@@ -426,19 +455,15 @@ void step6(std::vector<std::vector<T>>& matrix,
     step = 4;
 }
 
-/* Calculates the optimal cost from mask matrix */
-template<template <typename, typename...> class Container,
-         typename T,
-         typename... Args>
-T output_solution(const Container<Container<T,Args...>>& original,
-                  const std::vector<std::vector<int>>& M)
+
+int output_solution(const vector<vector<int>>& original_matrix, const vector<vector<int>>& M)
 {
-    T res = 0;
+    int res = 0;
     
-    for (unsigned j=0; j<original.begin()->size(); ++j)
-        for (unsigned i=0; i<original.size(); ++i)
+    for (unsigned j=0; j<original_matrix.begin()->size(); ++j)
+        for (unsigned i=0; i<original_matrix.size(); ++i)
             if (M[i][j]) {
-                auto it1 = original.begin();
+                auto it1 = original_matrix.begin();
                 std::advance(it1, i);
                 auto it2 = it1->begin();
                 std::advance(it2, j);
@@ -449,28 +474,11 @@ T output_solution(const Container<Container<T,Args...>>& original,
     return res;
 }
 
+// [[Rcpp::export]]
+int Hungarian(vector<vector<int>> matrix, bool allow_negatives = true){
 
-
-int output_solution(const vector<vector<int>>& M)
-{
-    int res = 0;
-    
-    for (unsigned j=0; j<original.begin()->size(); ++j)
-        for (unsigned i=0; i<original.size(); ++i)
-            if (M[i][j]) {
-                auto it1 = original.begin();
-                advance(it1, i);
-                auto it2 = it1->begin();
-                advance(it2, j);
-                res += *it2;
-                continue;                
-            }
-            
-    return res;
-}
-
-
-Hungarian(vector<vector<int>> matrix, bool allow_negatives = true){
+    vector<vector<int>> original_matrix;
+    copy_matrix(matrix, original_matrix);
 
     // make square matrix
     pad_matrix(matrix);
@@ -490,172 +498,61 @@ Hungarian(vector<vector<int>> matrix, bool allow_negatives = true){
     // Array for the augmenting path algorithm
     vector<vector<int>> path (sz+1, vector<int>(2, 0));
 
+    print(matrix);
+    print("----------");
+
     bool done = false;
     int step = 1;
     while (!done) {
         switch (step) {
             case 1:
                 step1(matrix, step);
+                print(matrix);
+                print("----------Step : ", 1);
                 break;
             case 2:
                 step2(matrix, M, RowCover, ColCover, step);
+                print(matrix);
+                print("----------Step : ", 2);
                 break;
             case 3:
                 step3(M, ColCover, step);
+                print(matrix);
+                print("----------Step : ", 3);
                 break;
             case 4:
                 step4(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step);
+                print(matrix);
+                print("----------Step : ", 4);
                 break;
             case 5:
                 step5(path, path_row_0, path_col_0, M, RowCover, ColCover, step);
+                print(matrix);
+                print("----------Step : ", 5);
                 break;
             case 6:
                 step6(matrix, RowCover, ColCover, step);
+                print(matrix);
+                print("----------Step : ", 6);
                 break;
             case 7:
-                for (auto& vec: M) {vec.resize(original.begin()->size());}
-                M.resize(original.size());
+                for (auto& vec: M) {vec.resize(matrix.begin()->size());}
+                M.resize(matrix.size());
+                print(matrix);
+                print(M);
+                print("----------Step : ", 7);
                 done = true;
                 break;
             default:
+                print(matrix);
+                print("----------Step : ", 8);
                 done = true;
                 break;
         }
     }
 
-    //Printing part (optional)
-    std::cout << "Cost Matrix: \n" << original << std::endl 
-              << "Optimal assignment: \n" << M;
-    
-    return output_solution(original, M);
+    return output_solution(original_matrix, M);
 }
-
-/* Main function of the algorithm */
-// [[Rcpp::export]]
-template<template <typename, typename...> class Container,
-         typename T,
-         typename... Args>
-typename std::enable_if<std::is_integral<T>::value, T>::type // Work only on integral types
-hungarian(const Container<Container<T,Args...>>& original,
-          bool allow_negatives = true)
-{  
-    /* Initialize data structures */
-    
-    // Work on a vector copy to preserve original matrix
-    // Didn't passed by value cause needed to access both
-    std::vector<std::vector<T>> matrix (original.size(), 
-                                        std::vector<T>(original.begin()->size()));
-    
-    auto it = original.begin();
-    for (auto& vec: matrix) {         
-        std::copy(it->begin(), it->end(), vec.begin());
-        it = std::next(it);
-    }
-    
-    // handle negative values -> pass true if allowed or false otherwise
-    // if it is an unsigned type just skip this step
-    if (!std::is_unsigned<T>::value) {
-        handle_negatives(matrix, allow_negatives);
-    }
-    
-    
-    // make square matrix
-    pad_matrix(matrix);
-    std::size_t sz = matrix.size();
-    
-    /* The masked matrix M.  If M(i,j)=1 then C(i,j) is a starred zero,  
-     * If M(i,j)=2 then C(i,j) is a primed zero. */
-    std::vector<std::vector<int>> M (sz, std::vector<int>(sz, 0));
-    
-    /* We also define two vectors RowCover and ColCover that are used to "cover" 
-     *the rows and columns of the cost matrix C*/
-    std::vector<int> RowCover (sz, 0);
-    std::vector<int> ColCover (sz, 0);
-    
-    int path_row_0, path_col_0; //temporary to hold the smallest uncovered value
-    
-    // Array for the augmenting path algorithm
-    std::vector<std::vector<int>> path (sz+1, std::vector<int>(2, 0));
-    
-    /* Now Work The Steps */
-    bool done = false;
-    int step = 1;
-    while (!done) {
-        switch (step) {
-            case 1:
-                step1(matrix, step);
-                break;
-            case 2:
-                step2(matrix, M, RowCover, ColCover, step);
-                break;
-            case 3:
-                step3(M, ColCover, step);
-                break;
-            case 4:
-                step4(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step);
-                break;
-            case 5:
-                step5(path, path_row_0, path_col_0, M, RowCover, ColCover, step);
-                break;
-            case 6:
-                step6(matrix, RowCover, ColCover, step);
-                break;
-            case 7:
-                for (auto& vec: M) {vec.resize(original.begin()->size());}
-                M.resize(original.size());
-                done = true;
-                break;
-            default:
-                done = true;
-                break;
-        }
-    }
-    
-    //Printing part (optional)
-    std::cout << "Cost Matrix: \n" << original << std::endl 
-              << "Optimal assignment: \n" << M;
-    
-    return output_solution(original, M);
-}
-
-
-void print(const string& message) {
-    cout << message << endl;
-}
-
-void print(int number) {
-    cout << number << endl;
-}
-
-template <typename T, typename U>
-void print(const T& message, const U& value) {
-    std::cout << message << value << std::endl;
-}
-
-template <typename T>
-void print(const vector<T>& my_vector){
-    for (const T& elem : my_vector) {
-        cout << elem << " ";
-    }
-    cout << endl;
-}
-
-template <typename T>
-void print(vector<vector<T>> matrix){
-    // Iterate through the rows
-    for (const auto& row : matrix) {
-        // Iterate through the columns in the current row
-        print(row);
-    }
-}
-
-template <typename T, typename U>
-void print(vector<pair<T, U>> pairs){
-    for (const auto& p : pairs) {
-        cout << "(" << p.first << ", " << p.second << ")" << endl;
-    }
-}
-
 
 
 int main() //example of usage
@@ -669,36 +566,7 @@ int main() //example of usage
     {315, 365, 366, 366, 366, 366}
     };
 
-    auto res = hungarian(matrix);
-    std::cout << "Optimal cost: " << res << std::endl;
-    std::cout << "----------------- \n\n";
-    
-    vector<vector<vector<int>>> tests;
-    
-    tests.push_back({{8,6,5},
-                     {5,4,7},
-                     {8,4,6}});
-    
-    tests.push_back({{0,45,78},
-                     {23,0,63},
-                     {66,85,0}});
-    
-    tests.push_back({{80,40,50,46}, 
-                     {40,70,20,25},
-                     {30,10,20,30},
-                     {35,20,25,30}});
-    
-    tests.push_back({{10,19,8,15},
-                     {10,18,7,17},
-                     {13,16,9,14},
-                     {12,19,8,18},
-                     {14,17,10,19}});
-    
-    for (auto& m: tests) {
-        auto r = hungarian(m);
-        std::cout << "Optimal cost: " << r << std::endl;
-        std::cout << "----------------- \n\n";
-    }
-    
+    int cout = Hungarian(matrix);
+    cout << "Optimal: " << cout << endl;
     return 0;
 }
