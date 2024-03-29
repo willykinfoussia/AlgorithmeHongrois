@@ -37,20 +37,33 @@ cost_matrix <- 1 - cost_matrix / n
 ```{r cleaning, include=FALSE}
 
 data <- read.csv("mean_data.csv")
+subdata<-data[, -(1:2)]
 
-cost_matrix <- matrix(0, nrow = ncol(data), ncol = ncol(data))
+cost_matrix <- matrix(0, nrow = 10, ncol = 10)
 
-for (i in 1: ncol(data)) {
-  for (j in 11: 10+ncol(data)) {
-    cost_matrix[i,j-10]=dist(data[i,],data[j,])
+for (i in 1: 10) {
+  for (j in 11: 20) {
+    cost_matrix[i,j-10]=sum((subdata[i,] - subdata[j,])^2)
   }
 }
+
+```
+
+#génération aléatoire des centroïdes des classes et clusters:
+
+```{r cleaning, include=FALSE}
+
+matrice_gaussienne <- matrix(rnorm(nb_lignes * nb_colonnes), nrow = nb_lignes, ncol = nb_colonnes)
+
+matrice_gaussienne_normalisee <- pnorm(matrice_gaussienne)
 
 ```
 
 ```{r cleaning, include=FALSE}
 # Afficher la matrice de coût
 print(cost_matrix)
+
+write.csv(cost_matrix, file = "cout_matrice.csv", row.names = FALSE)
 
 ```
 
