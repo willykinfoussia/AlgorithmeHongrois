@@ -61,7 +61,7 @@ cost_matrix <- 1 - cost_matrix / n
 #calcul de la matrice de coût par une distance euclidienne de la différence entre centroïde et moyenne de la classe : 
 ```{r cleaning, include=FALSE}
 
-data <- read.csv("mean_data.csv")
+data <- read.csv("données_centroides_classe-cluster_MNIST.csv")
 subdata<-data[, -(1:2)]
 
 cost_matrix <- matrix(0, nrow = 10, ncol = 10)
