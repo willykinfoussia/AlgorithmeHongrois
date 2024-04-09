@@ -115,6 +115,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(Rcpp)
 sourceCpp("Hungarian.cpp")
+sourceCpp("NaiveAlgorithme.cpp")
 ```
 
 
@@ -124,8 +125,19 @@ cost_matrix <- list(
   c(5, 4, 7),
   c(8, 4, 6)
 )
-total_cost <- Hungarian(cost_matrix)
-print(total_cost)
+naive_adj_matrix <- NaiveAlgorithme(cost_matrix)
+naive_adj_matrix
+```
+
+
+```{r}
+cost_matrix <- list(
+  c(8, 6, 5),
+  c(5, 4, 7),
+  c(8, 4, 6)
+)
+hungarian_adj_matrix <- Hungarian(cost_matrix)
+hungarian_adj_matrix
 ```
 
 
