@@ -52,15 +52,10 @@ Où :
 
 mnist_train <-  read.csv('mnist_test.csv')
 
-mnist_test <-  read.csv('mnist_test.csv')
-
 x_train <- mnist_train[, -1]
 y_train <- mnist_train[, 1]
-x_test <- mnist_test[, -1]
-y_test <- mnist_test[, 1]
 
 x_train_vec <- x_train / 255
-x_test_vec <- x_test / 255
 
 constant_columns <- apply(x_train_vec, 2, function(col) length(unique(col)) == 1)
 x_train_vec <- x_train_vec[, !constant_columns]
@@ -68,7 +63,6 @@ x_train_vec <- x_train_vec[, !constant_columns]
 pca <- prcomp(x_train_vec, center = TRUE, scale. = TRUE, rank = 50)
 
 x_train_pca <- predict(pca, x_train_vec)
-x_test_pca <- predict(pca, x_test_vec)
 
 ```
 
@@ -157,8 +151,7 @@ cost_matrix_mnist <- lapply(1:k, function(i) as.vector(cost_matrix_mnist[i, ]))
 
 matrice_couts <- function(n) {
   
-  matrice_gaussienne <- matrix(rnorm(n * n), nrow = n, ncol = n)
-  cost_matrix_random <- pnorm(matrice_gaussienne)
+  cost_matrix_random <- matrix(rnorm(n * n, mean = 100, sd = 15), nrow = n, ncol = n)
   liste_matrice <- lapply(1:n, function(i) as.vector(cost_matrix_random[i, ]))
   
   return(liste_matrice)
@@ -193,8 +186,8 @@ L'algorithme naîf permet de résoudre ce problème brutalement en calculant tou
 ##
 
 ```{r}
-#Algo naif a mettre la-dedans
-
+library(Rcpp)
+sourceCpp("NaiveAlgorithme.cpp")
 
 ```
 
@@ -225,28 +218,31 @@ temps_execution <- function(n_liste,p,algo) {
   }
   return(temps)
 }
-
 ```
 
 ##
 
+Pour obtenir la complexité, on détermine la régression log(T)=f(n*log(n)-n) où l'on a utilisé la formule de stirling par simplicité:
+
 ```{r}
 
-liste_dimension <- c(20,50,100,500,1000)
+liste_dimension <- seq(from = 5, to = 12, by = 1)
 
-#temps_exe <- log(temps_execution(liste_dimension,5,algo_naif)) #mettre l'algo naif dedans
+logn_n <- (log(liste_dimension)-1)*liste_dimension
 
-#plot(log(liste_dimension),temps_exe,xlab='log(nombre de classes)',ylab='log(temps')
+temps_exe <- log(temps_execution(liste_dimension,5,NaiveAlgorithme)) 
 
-#reg <- lm(temps_exe~log(liste_dimension))
+plot(log(liste_dimension),temps_exe,xlab='log(nombre de classes)',ylab='log(temps)')
 
-#summary(reg)
+reg <- lm(temps_exe~logn_n)
 
-#print("complexité polynomiale :")
+summary(reg)
 
-#print(coef(reg)[2])
+print(coef(reg)[2])
 
 ```
+
+La régression donne des valeurs proches de 1 (0.88-0.94) avec un R^2>0.88. Ainsi, on a bien une complexité en N! par équivalence avec n*log(n)-n. 
 
 ##
 
@@ -284,12 +280,12 @@ Les différentes étapes sont faites avec une complexité de 1 sur la totalité 
 ##
 
 ```{r}
-library(Rcpp)
 sourceCpp("Hungarian.cpp")
-sourceCpp("NaiveAlgorithme.cpp")
 ```
 
 ```{r}
+
+liste_dimension <- seq(from = 10, to = 450, by = 20)
 
 temps_exe_hong <- log(temps_execution(liste_dimension,5,Hungarian))
 
@@ -312,18 +308,32 @@ Performances sur MNIST
 </p>
 
 <p>
-On utilise le s clusters associés aux classes pour prédire le test de mnist. Pour ce faire, nous utilisons la matrice d'assignation classe/cluster obtenue pour assigner les classes aux clusters prédits par l'algorithme des k-means. Nous comparons ensuite avec la vraie classe des données test mnist. 
+On utilise les clusters associés aux classes pour prédire le test de mnist. Pour ce faire, nous utilisons la matrice d'assignation classe/cluster obtenue pour assigner les classes aux clusters prédits par l'algorithme des k-means. Nous comparons ensuite avec la vraie classe des données test mnist avec celle prédite par cette association. 
+
+##
 
 ```{r}
 
-#clusters_test <- predict(kmeans_model, newdata = x_test_pca)
+assignation <- Hungarian(cost_matrix_mnist) # matrice bijection classes/clusters trouvés par l'algorithme hongrois
 
-# association cluster/classe par Hungarian(cost_matrix_mnist)
+association <-numeric(k) # version liste de la bijection
 
+for (i in seq_along(assignation)) {
+  
+  association[i] <- which(assignation[[i]] == 1)
+}
 
+assignement_classe<-association[assignement_cluster] # assignement des données à des classes prédites par la bijection
+
+précision <- mean(assignement_classe != y_train) * 100 
+
+print(précision)
 
 ```
-</p>
+## 
+
+Nous obtenons une efficacité supérieure à 85%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captées par 
+l'algorithme kmeans que l'algorithme hongrois permet de trouver une association cohérente entre les clusters et les classes.
 
 ##
 
