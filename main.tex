@@ -414,18 +414,18 @@ simplicité:
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -1.4095 -1.1290 -0.2261  0.4631  2.9511 
+## -1.6632 -0.8322 -0.1471  0.4174  2.7435 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept) -13.7001     1.2511 -10.950 3.44e-05 ***
-## logn_n        0.8475     0.1125   7.535 0.000283 ***
+## (Intercept) -13.2945     1.1986 -11.092  3.2e-05 ***
+## logn_n        0.8250     0.1077   7.657 0.000259 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 1.546 on 6 degrees of freedom
-## Multiple R-squared:  0.9044, Adjusted R-squared:  0.8885 
-## F-statistic: 56.78 on 1 and 6 DF,  p-value: 0.0002831
+## Residual standard error: 1.481 on 6 degrees of freedom
+## Multiple R-squared:  0.9072, Adjusted R-squared:  0.8917 
+## F-statistic: 58.62 on 1 and 6 DF,  p-value: 0.0002594
 \end{verbatim}
 
 \begin{Shaded}
@@ -436,7 +436,7 @@ simplicité:
 
 \begin{verbatim}
 ##    logn_n 
-## 0.8475003
+## 0.8249515
 \end{verbatim}
 
 La régression donne des valeurs proches de 1 (0.88-0.94) avec un
@@ -515,19 +515,19 @@ a une complexité théorique en O(n\^{}4)
 ## lm(formula = temps_exe_hong ~ log(liste_dimension))
 ## 
 ## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.13748 -0.44798 -0.08771  0.34944  2.38416 
+##     Min      1Q  Median      3Q     Max 
+## -0.8843 -0.4348 -0.1091  0.3290  2.0364 
 ## 
 ## Coefficients:
 ##                      Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)          -16.3821     0.8521  -19.23 8.26e-15 ***
-## log(liste_dimension)   2.5604     0.1629   15.71 4.37e-13 ***
+## (Intercept)          -15.6956     0.7541  -20.81 1.69e-15 ***
+## log(liste_dimension)   2.4387     0.1442   16.91 1.04e-13 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.7286 on 21 degrees of freedom
-## Multiple R-squared:  0.9216, Adjusted R-squared:  0.9179 
-## F-statistic: 246.9 on 1 and 21 DF,  p-value: 4.373e-13
+## Residual standard error: 0.6448 on 21 degrees of freedom
+## Multiple R-squared:  0.9316, Adjusted R-squared:  0.9283 
+## F-statistic:   286 on 1 and 21 DF,  p-value: 1.041e-13
 \end{verbatim}
 
 \begin{Shaded}
@@ -548,7 +548,7 @@ a une complexité théorique en O(n\^{}4)
 
 \begin{verbatim}
 ## log(liste_dimension) 
-##             2.560362
+##             2.438655
 \end{verbatim}
 
 \hypertarget{section-16}{%
@@ -585,7 +585,7 @@ classe des données test mnist avec celle prédite par cette association.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 96.96
+## [1] 97.7
 \end{verbatim}
 
 \hypertarget{section-18}{%
