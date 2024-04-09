@@ -82,9 +82,11 @@ int calculateCost(const vector<vector<int>>& matrix, const vector<int>& assignme
  * @return Une paire contenant le vecteur d'assignation avec le coût minimal et le coût minimal lui-même.
  */
 // [[Rcpp::export]]
-vector<vector<int>> NaiveAlgorithme(const vector<vector<int>>& matrix) {
-    print("Original Matrix : ");
-    print(matrix);
+vector<vector<int>> NaiveAlgorithme(const vector<vector<int>>& matrix, bool verbose = false) {
+    if(verbose){
+        print("Original Matrix : ");
+        print(matrix);
+    }
 
     int n = matrix.size(); // Taille de la matrice
     
@@ -118,12 +120,14 @@ vector<vector<int>> NaiveAlgorithme(const vector<vector<int>>& matrix) {
         }
     } while (next_permutation(indices.begin(), indices.end())); // Générer la prochaine permutation
 
-    print("Affectation optimal :");
-    print(minAssignment);
-    print("Matrix:");
     vector<vector<int>> adjacencyMatrix = associationListToAdjacencyMatrix(minAssignment);
-    print(adjacencyMatrix);
-    print("Minimal Cost : ", minCost);
+    if(verbose){
+        print("Affectation optimal :");
+        print(minAssignment);
+        print("Matrix:");
+        print(adjacencyMatrix);
+        print("Minimal Cost : ", minCost);
+    }
 
     // Retourner une paire contenant l'assignation avec le coût minimal et le coût minimal lui-même
     return adjacencyMatrix;
