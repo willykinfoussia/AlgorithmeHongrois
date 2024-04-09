@@ -50,6 +50,51 @@ Où :
 
 ##
 
+```{r}
+
+dir='C:/Users/Aurelien/Desktop/M2DS/S2/Algorithmique/' #a changer
+
+mnist_train <-  read.csv(paste0(dir, 'AlgorithmeHongrois/mnist_train.csv'))
+
+mnist_test <-  read.csv(paste0(dir,'AlgorithmeHongrois/mnist_test.csv'))
+
+x_train <- mnist_train[, -1]
+y_train <- mnist_train[, 1]
+x_test <- mnist_test[, -1]
+y_test <- mnist_test[, 1]
+
+x_train_vec <- x_train / 255
+x_test_vec <- x_test / 255
+
+constant_columns <- apply(x_train_vec, 2, function(col) length(unique(col)) == 1)
+x_train_vec <- x_train_vec[, !constant_columns]
+
+pca <- prcomp(x_train_vec, center = TRUE, scale. = TRUE, rank = 50)
+
+x_train_pca <- predict(pca, x_train_vec)
+x_test_pca <- predict(pca, x_test_vec)
+
+```
+
+##
+
+```{r}
+library(stats)
+
+k <- 10
+
+kmeans_model <- kmeans(x_train_pca, centers = k)
+
+clusters_centroid <- kmeans_model$centers
+
+assignement_cluster <- kmeans_model$cluster
+
+classes_centroid <- list()
+
+```
+
+##
+
 <p>
 Optimisation
 </p>
@@ -83,6 +128,40 @@ avec la contrainte qu'il ne doit y avoir qu'un seul $1$ par ligne et des $0$ sur
 
 ##
 
+```{r}
+for (class_label in 0:(k - 1)) {
+  
+  class_data <- x_train_pca[y_train == class_label, ]
+  
+  centroid <- colMeans(class_data)
+  
+  classes_centroid[[as.character(class_label)]] <- centroid
+}
+
+cost_matrix <- matrix(0, nrow = k, ncol = k)
+
+for (i in 0:k-1) {
+  for (j in 1:k) {
+
+    distance <- sqrt(sum((classes_centroid[[as.character(i)]] - clusters_centroid[j, ])^2))
+    
+    cost_matrix[i+1, j] <- distance
+  }
+}
+
+```
+
+```{r cleaning, include=FALSE}
+
+#Génération de matrice de coût aléatoire
+
+matrice_gaussienne <- matrix(rnorm(k * k), nrow = k, ncol = k)
+
+cost_matrix_random <- pnorm(matrice_gaussienne)
+
+```
+
+##
 
 Comme on souhaite aussi qu’un cluster corresponde à une ligne ( éventuellement il est possible de faire concorder plusieurs clusters à une classe et inversement en enlevant les contraintes sur la bijection de notre association), une seconde contrainte est qu’il ne doit y avoir qu’un 1 par ligne et des 0 sur le reste. 
 

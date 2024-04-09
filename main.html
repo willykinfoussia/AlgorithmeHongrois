@@ -3254,6 +3254,47 @@ Construction de la matrice de coût
 
 </article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-3">
 
+<pre class = 'prettyprint lang-r'>dir=&#39;C:/Users/Aurelien/Desktop/M2DS/S2/Algorithmique/&#39; #a changer
+
+mnist_train &lt;-  read.csv(paste0(dir, &#39;AlgorithmeHongrois/mnist_train.csv&#39;))
+
+mnist_test &lt;-  read.csv(paste0(dir,&#39;AlgorithmeHongrois/mnist_test.csv&#39;))
+
+x_train &lt;- mnist_train[, -1]
+y_train &lt;- mnist_train[, 1]
+x_test &lt;- mnist_test[, -1]
+y_test &lt;- mnist_test[, 1]
+
+x_train_vec &lt;- x_train / 255
+x_test_vec &lt;- x_test / 255
+
+constant_columns &lt;- apply(x_train_vec, 2, function(col) length(unique(col)) == 1)
+x_train_vec &lt;- x_train_vec[, !constant_columns]
+
+pca &lt;- prcomp(x_train_vec, center = TRUE, scale. = TRUE, rank = 50)
+
+x_train_pca &lt;- predict(pca, x_train_vec)
+x_test_pca &lt;- predict(pca, x_test_vec)</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-4">
+
+<pre class = 'prettyprint lang-r'>library(stats)
+
+k &lt;- 10
+
+kmeans_model &lt;- kmeans(x_train_pca, centers = k)</pre>
+
+<pre >## Warning: Les étapes de transfer (quick-TRANSfer stage) ont dépassé le maximum
+## (= 3000000)</pre>
+
+<pre class = 'prettyprint lang-r'>clusters_centroid &lt;- kmeans_model$centers
+
+assignement_cluster &lt;- kmeans_model$cluster
+
+classes_centroid &lt;- list()</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-5">
+
 <p>
 
 Optimisation
@@ -3288,7 +3329,29 @@ X_{ck} =
 \ \sum_{k=1}^{10} X_{ck} = 1
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-4">
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-6">
+
+<pre class = 'prettyprint lang-r'>for (class_label in 0:(k - 1)) {
+  
+  class_data &lt;- x_train_pca[y_train == class_label, ]
+  
+  centroid &lt;- colMeans(class_data)
+  
+  classes_centroid[[as.character(class_label)]] &lt;- centroid
+}
+
+cost_matrix &lt;- matrix(0, nrow = k, ncol = k)
+
+for (i in 0:k-1) {
+  for (j in 1:k) {
+
+    distance &lt;- sqrt(sum((classes_centroid[[as.character(i)]] - clusters_centroid[j, ])^2))
+    
+    cost_matrix[i+1, j] &lt;- distance
+  }
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-7">
 
 <p>Comme on souhaite aussi qu’un cluster corresponde à une ligne ( éventuellement il est possible de faire concorder plusieurs clusters à une classe et inversement en enlevant les contraintes sur la bijection de notre association), une seconde contrainte est qu’il ne doit y avoir qu’un 1 par ligne et des 0 sur le reste.</p>
 
@@ -3299,12 +3362,12 @@ X_{ck} =
 <p>La fonction de coût à minimiser est la somme des produits \(X_{kl} \times M_{kl}\) sur \(l\) et \(k\) :</p>
 
 <p>\[
-\text{Coût}(X) = \sum_{l=1}^{10} \sum_{k=1}^{10} X_{kl} \times C_{kl}
+\text{Coût(association X)} = \sum_{c=1}^{10} \sum_{k=1}^{10} X_{ck} \times M_{ck}
 \]</p>
 
-<p>Cette fonction de coût correspond à associer le coût minimal total à l’association classe/cluster choisie. De cette manière, on s’assure que l’association permet au maximum de réduire la distance séparant le cluster de la classe.</p>
+<p>Cette fonction correspond au coût de l’association classe/cluster choisie. En la minimisant, on s’assure que l’association permet au maximum de réduire la distance séparant le cluster de la classe.</p>
 
-</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-5">
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-8">
 
 <p>
 
@@ -3314,7 +3377,7 @@ Algorithmes de résolution - cas naîf
 
 <p>L’algorithme naîf permet de résoudre ce problème brutalement en calculant toutes les sommes de coût possible. C’est-à-dire calculer toutes les associations classes-clusters possibles, additionner leurs coûts et renvoyer l’association qui minimise le coût. La complexité théorique de cet algorithmique est N! où N est le nombre de classes/clusters. En effet, pour la classe 1, il y a 10 clusters possibles. Une fois un cluster choisi, on obtient le premier coefficient de coût. Il reste donc pour la classe 2 9 clusters possibles, 8 pour la classe 3, etc. Ceci donne bien N! associations possibles donc N! somme des coûts possibles, ce qui donne la complexité de cet algorithme.</p>
 
-</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-6">
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-9">
 
 <pre class = 'prettyprint lang-r'>library(Rcpp)</pre>
 
