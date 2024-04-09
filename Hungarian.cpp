@@ -499,7 +499,7 @@ int Hungarian(vector<vector<int>> matrix, bool verbose = false, bool allow_negat
     vector<vector<int>> path (sz+1, vector<int>(2, 0));
 
     if(verbose){
-        print(matrix);
+//print(matrix);
         print("----------");
     }
 
@@ -510,62 +510,62 @@ int Hungarian(vector<vector<int>> matrix, bool verbose = false, bool allow_negat
             case 1:
                 step1(matrix, step);
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 1);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 1);
+                    }
                 break;
             case 2:
                 step2(matrix, M, RowCover, ColCover, step);
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 2);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 2);
+                    }
                 break;
             case 3:
                 step3(M, ColCover, step);
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 3);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 3);
+                    }
                 break;
             case 4:
                 step4(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step);
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 4);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 4);
+                    }
                 break;
             case 5:
                 step5(path, path_row_0, path_col_0, M, RowCover, ColCover, step);
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 5);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 5);
+                    }
                 break;
             case 6:
                 step6(matrix, RowCover, ColCover, step);
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 6);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 6);
+                    }
                 break;
             case 7:
                 for (auto& vec: M) {vec.resize(matrix.begin()->size());}
                 M.resize(matrix.size());
                 if(true){
-                    print("Original Matrix:");
-                    print(matrix);
-                    print("Assignements Matrix:");
-                    print(M);
-                    print("----------Final Step : ", 7);
-                }
+                    //print("Original Matrix:");
+                    //print(matrix);
+                    //print("Assignements Matrix:");
+                    //print(M);
+                    //print("----------Final Step : ", 7);
+                    }
                 done = true;
                 break;
             default:
                 if(verbose){
-                    print(matrix);
-                    print("----------Step : ", 8);
-                }
+                    //print(matrix);
+                    //print("----------Step : ", 8);
+                    }
                 done = true;
                 break;
         }
