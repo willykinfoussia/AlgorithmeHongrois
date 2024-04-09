@@ -1,14 +1,9 @@
 ---
-title: "Correspondance entre classes étiquettées et Clusters prédits par algorithme hongrois"
+title: Correspondance entre classes étiquettées et Clusters prédits par algorithme
+  hongrois
 author: "Willy Kinfoussia, Aurélien Henriques"
 date: "2023-2024 M2DS"
-output: 
-  ioslides_presentation:
-    widescreen: true
-  header-includes:
-  - \usepackage{amsmath}
-  - \usepackage{amsfonts}
-  - \usepackage{amssymb}
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -55,11 +50,9 @@ Où :
 
 ```{r}
 
-dir='C:/Users/Aurelien/Desktop/M2DS/S2/Algorithmique/' #a changer
+mnist_train <-  read.csv('mnist_test.csv')
 
-mnist_train <-  read.csv(paste0(dir, 'mnist_train.csv'))
-
-mnist_test <-  read.csv(paste0(dir,'AlgorithmeHongrois/mnist_test.csv'))
+mnist_test <-  read.csv('mnist_test.csv')
 
 x_train <- mnist_train[, -1]
 y_train <- mnist_train[, 1]
@@ -359,9 +352,9 @@ Ce processus garantit de trouver l'assignation optimale avec le coût minimal, m
 
 ```{r}
 cost_matrix <- list(
-  c(8, 6, 5),
-  c(5, 4, 7),
-  c(8, 4, 6)
+  c(1, 1.2, 5.2),
+  c(5.2, 9.1, 7.2),
+  c(8.2, 1.2, 9.1)
 )
 naive_adj_matrix <- NaiveAlgorithme(cost_matrix)
 naive_adj_matrix
@@ -451,9 +444,9 @@ Diverses fonctions auxiliaires sont utilisées pour effectuer des opérations sp
 
 ```{r}
 cost_matrix <- list(
-  c(8, 6, 5),
-  c(5, 4, 7),
-  c(8, 4, 6)
+  c(9, 1, 5),
+  c(1, 9, 7),
+  c(8, 1, 9)
 )
 hungarian_adj_matrix <- Hungarian(cost_matrix)
 hungarian_adj_matrix
