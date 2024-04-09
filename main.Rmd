@@ -334,6 +334,29 @@ On utilise le s clusters associés aux classes pour prédire le test de mnist. P
 
 ##
 
+<p>
+Fonction NaiveAlgorithme :
+</p>
+
+<p>
+Cette fonction résout le problème d'affectation en générant toutes les permutations possibles de l'assignation et en trouvant celle avec le coût minimal. Elle prend en entrée la matrice d'association. Elle initialise le vecteur minAssignment pour stocker l'assignation optimale avec le coût minimal et le coût minimal lui-même à une valeur maximale. Ensuite, elle initialise un vecteur currentAssignment pour stocker l'assignation courante. Elle génère tous les indices de permutation de 0 à n-1. Puis, elle itère à travers toutes les permutations possibles : Elle construit l'assignation courante en utilisant les indices de permutation. Elle calcule le coût de l'assignation courante en utilisant la fonction calculateCost. Elle met à jour l'assignation optimale et le coût minimal si le coût de l'assignation courante est inférieur au coût minimal actuel. Après avoir exploré toutes les permutations, elle renvoie une paire contenant l'assignation avec le coût minimal et le coût minimal lui-même.
+</p>
+
+    
+<p>
+Fonction calculateCost :
+</p>
+
+<p>
+Cette fonction calcule le coût total d'une affectation donnée en fonction de la matrice d'association et de l'assignation. Elle initialise le coût total à zéro. Ensuite, elle parcourt chaque ligne de la matrice d'association. Pour chaque ligne, elle ajoute le coût de l'élément correspondant dans la matrice d'association selon l'assignation donnée. Enfin, elle retourne le coût total calculé.
+</p>
+
+<p>
+Ce processus garantit de trouver l'assignation optimale avec le coût minimal, mais avec une complexité de O(n!), ce qui peut être inefficace pour des grandes valeurs de n.
+</p>
+
+
+
 ```{r}
 cost_matrix <- list(
   c(8, 6, 5),
@@ -344,6 +367,87 @@ naive_adj_matrix <- NaiveAlgorithme(cost_matrix)
 naive_adj_matrix
 ```
 
+<p>
+L'algorithme hongrois, également connu sous le nom de méthode hongroise ou algorithme de Kuhn-Munkres, est un algorithme utilisé pour résoudre le problème d'affectation, qui consiste à trouver la meilleure correspondance entre deux ensembles d'éléments, tout en minimisant le coût total de cette affectation.
+</p>
+
+<p>
+Voici une explication complète du fonctionnement de l'algorithme hongrois :
+</p>
+
+<p>
+Initialisation :
+</p>
+<p>
+La fonction Hungarian est appelée, prenant en entrée une matrice de coûts matrix qui représente les coûts d'affectation entre deux ensembles d'éléments. Cette matrice peut être rectangulaire mais est transformée en une matrice carrée pour l'algorithme. Une copie de la matrice originale est faite pour sauvegarder les valeurs initiales.
+
+La fonction adjust_matrix est utilisée pour rendre la matrice d'entrée carrée en ajoutant des zéros aux rangées ou aux colonnes supplémentaires si nécessaire.
+
+Des vecteurs temporaires sont initialisés pour suivre les affectations et les couvertures de lignes et de colonnes. La matrice M est initialisée pour stocker les affectations (zéros étoilés et zéros primés).
+</p>
+
+<p>
+Itération à travers les étapes de l'algorithme :
+</p>
+<p>
+Étape 1 - Initialisation :
+</p>
+<p>
+L'algorithme commence par l'étape 1, où il effectue des ajustements sur la matrice d'entrée pour garantir qu'elle soit carrée. Il soustrait le minimum de chaque ligne de la matrice et le minimum de chaque colonne, de sorte que dans chaque ligne et chaque colonne, il y ait au moins un zéro. Cela crée une configuration initiale pour l'algorithme.
+</p>
+
+<p>
+Étape 2 - Étoiles dans la matrice :
+</p>
+<p>
+ À l'étape 2, l'algorithme cherche des zéros non couverts dans la matrice d'entrée. Si un zéro est trouvé, il est étoilé (marqué). Les lignes et les colonnes contenant ces zéros étoilés sont ensuite couvertes (marquées). L'algorithme continue à chercher des zéros non couverts jusqu'à ce qu'il n'y en ait plus.
+</p>
+
+<p>
+Étape 3 - Couvertures des colonnes :
+</p>
+<p>
+À l'étape 3, l'algorithme examine les zéros étoilés dans chaque colonne de la matrice. Si une colonne contient un zéro étoilé, cette colonne est couverte. L'algorithme continue à parcourir les colonnes jusqu'à ce que toutes les colonnes contenant des zéros étoilés soient couvertes.
+</p>
+
+<p>
+Étape 4 - Chemins augmentants :
+</p>
+<p>
+À l'étape 4, l'algorithme cherche à construire des chemins alternés (chemins augmentants) à travers les zéros étoilés et primés dans la matrice. Ces chemins sont utilisés pour effectuer des changements dans les affectations et sont un aspect clé de l'algorithme. L'algorithme peut construire plusieurs chemins alternés à partir de zéros étoilés et primés.
+</p>
+
+<p>
+Étape 5 - Mise à jour des affectations :
+</p>
+<p>
+À l'étape 5, l'algorithme met à jour les affectations en utilisant les chemins alternés construits à l'étape précédente. Les zéros étoilés sont transformés en zéros primés, et les zéros primés sont transformés en zéros étoilés. Ensuite, les lignes et les colonnes sont à nouveau couvertes.
+</p>
+
+<p>
+Étape 6 - Réduction des coûts :
+</p>
+<p>
+À l'étape 6, l'algorithme réduit les coûts dans la matrice d'entrée en ajoutant ou en soustrayant une valeur spécifique à chaque élément. Cette valeur est déterminée en fonction des zéros étoilés et primés et des lignes et colonnes couvertes. L'objectif est de rendre la matrice plus propice à la recherche de nouvelles affectations.
+</p>
+
+<p>
+Fin de l'itération :
+</p>
+<p>
+Une fois toutes les étapes terminées, l'algorithme vérifie s'il a trouvé une solution optimale. S'il n'y a plus de changements à apporter aux affectations, cela signifie qu'une solution optimale a été trouvée, et l'algorithme se termine. Sinon, il retourne à l'étape 3 et continue l'itération.   
+</p>
+
+<p>
+L'algorithme sort de la boucle une fois qu'une solution optimale est trouvée ou qu'il n'y a plus d'étapes à exécuter.
+</p>
+
+<p>
+Fonctions auxiliaires :
+</p>
+<p>
+Diverses fonctions auxiliaires sont utilisées pour effectuer des opérations spécifiques, telles que la recherche du plus petit élément dans une matrice, la recherche de zéros dans une matrice, la gestion des valeurs négatives, etc.
+</p>
 
 ```{r}
 cost_matrix <- list(
@@ -355,8 +459,69 @@ hungarian_adj_matrix <- Hungarian(cost_matrix)
 hungarian_adj_matrix
 ```
 
+## Complexité
 
+### Algorithme naive
 
+<p>
+La complexité de l'algorithme naïf est de O(n!), où n est la taille de la matrice d'association. Cette complexité est due à la génération de toutes les permutations possibles des affectations et au calcul du coût pour chaque permutation.
+</p>
 
+<p>
+Génération de toutes les permutations :
+</p>
+<p>
+- La fonction utilise la fonction next_permutation, qui génère toutes les permutations possibles des indices de 0 à n-1.
+- Il y a n! permutations possibles dans le pire des cas, car il y a n éléments à permuter.
+- La complexité de la génération de chaque permutation est O(n), car elle nécessite un tri lexicographique des indices.
+</p>
+
+<p>
+Calcul du coût pour chaque permutation :
+</p>
+<p>
+- Pour chaque permutation générée, le coût de cette permutation est calculé en utilisant la fonction calculateCost.
+- La fonction calculateCost parcourt chaque ligne de la matrice d'association une fois, ce qui prend O(n).
+- Dans le pire des cas, la fonction calculateCost est appelée n! fois, une fois pour chaque permutation.
+</p>
+
+<p>
+Ainsi, la complexité totale de l'algorithme naïf est de O(n!), car la génération de toutes les permutations possibles et le calcul du coût pour chaque permutation contribuent tous deux à cette complexité. Cette approche est pratique pour de petites tailles de matrices, mais devient rapidement inefficace pour des tailles de problèmes plus importantes en raison de sa complexité exponentielle.
+</p>
+
+### Algorithme hongrois
+<p>
+La complexité de l'algorithme hongrois est de O(n^3), où n est la taille de la matrice carrée d'entrée. Cette complexité est due principalement à la recherche de chemins augmentants dans le graphe bipartite associé à la matrice d'entrée.
+</p>
+
+<p>
+Initialisation :
+</p>
+<p>
+- Copier la matrice originale : O(n^2)
+- Ajuster la matrice en une matrice carrée : O(n^2)
+- Initialiser la matrice masquée M, les vecteurs de couverture des lignes et des colonnes, et d'autres variables temporaires : O(n^2)
+</p>
+
+<p>
+Boucle principale :
+</p>
+<p>
+- La boucle principale s'exécute jusqu'à ce que l'algorithme soit terminé, ce qui peut prendre plusieurs étapes.
+- Chaque étape de la boucle principale implique généralement la recherche de chemins augmentants dans le graphe bipartite associé à la matrice d'entrée.
+- La recherche de chemins augmentants utilise l'algorithme de l'arbre enraciné, qui a une complexité de O(n^3) dans le pire des cas.
+</p>
+
+<p>
+Calcul de la solution :
+</p>
+<p>
+- Une fois que l'algorithme est terminé, la complexité de la dernière étape dépend de la manière dont la solution est extraite de la matrice d'affectation.
+- Dans certains cas, cela peut impliquer une simple boucle sur la matrice d'affectation, ce qui ajoute une complexité supplémentaire de O(n^2).
+</p>
+
+<p>
+Ainsi, la complexité totale de l'algorithme hongrois est dominée par la recherche de chemins augmentants, ce qui donne une complexité globale de O(n^3). Cette complexité fait de l'algorithme hongrois une méthode efficace pour résoudre le problème d'assignation pondérée dans de nombreuses applications.
+</p>
 
 
