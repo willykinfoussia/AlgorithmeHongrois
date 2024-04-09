@@ -323,7 +323,7 @@ On utilise le s clusters associés aux classes pour prédire le test de mnist. P
 
 ```{r}
 
-clusters_test <- predict(kmeans_model, newdata = x_test_pca)
+#clusters_test <- predict(kmeans_model, newdata = x_test_pca)
 
 # association cluster/classe par Hungarian(cost_matrix_mnist)
 
