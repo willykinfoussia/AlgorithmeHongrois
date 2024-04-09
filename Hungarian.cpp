@@ -710,7 +710,7 @@ vector<vector<int>> Hungarian(vector<vector<int>> matrix, bool verbose = false){
                     vec.resize(matrix.begin()->size());
                 }
                 M.resize(matrix.size());
-                if (true) {
+                if (verbose) {
                     print("Original Matrix:");
                     print(matrix);
                     print("Assignments Matrix:");
