@@ -1,11 +1,112 @@
 ---
-title: "Main"
-author: "willy"
-date: "2024-03-28"
-output:
-  pdf_document: default
-  html_document: default
+title: "Correspondance entre classes étiquettées et Clusters prédits par algorithme hongrois"
+author: "Willy Kinfoussia, Aurélien Henriques"
+date: "2023-2024 M2DS"
+output: 
+  ioslides_presentation:
+    widescreen: true
+  header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{amsfonts}
+  - \usepackage{amssymb}
 ---
+
+
+##
+
+<p>
+Introduction
+</p>
+
+<p>
+Un problème notable dans l’apprentissage supervisé est la labélisation d’un grand nombre de données afin d’entraîner un modèle. En effet, Il arrive souvent que le nombre de données labelisées soit dérisoire comparément aux données dont l’on dispose au total. Certains algorithmes, par exemple l'algorithme SWAV, permettent de s'affranchir de ce problème en créant une représentation de classe par alteration faible des exemples labélisés, mais ils nécessitent un apprentissage contrastif afin de pouvoir identifier une classe. 
+</p>
+
+<p>
+Les algorithmes de clusterisation non-supervisé peuvent alors permettre de résoudre ce problème, en clusterisant les données par cluster pourvu que nous puissions identifier correctement les clusters aux étiquettes de classe. Dans ce cas, il suffirait alors de s’assurer de la bonne représentation du modèle des différentes classes via les clusters, et d’apposer aux données des clusters les étiquettes de classe issue de l’association cluster/classe.
+</p>
+
+##
+
+<p>
+Dans ce projet, nous proposons d’appliquer l’algorithme hongrois à ce problème. L’algorithme hongrois est un programme qui permet de trouver la meilleure association entre N agents et N tâches à l’aide de poids associés aux arrêtes entre agents et tâches. En pratique, il existe N**2 poids d’arrête et N ! façons différentes d’associer les agents aux tâches. La recherche de l’optimum des associations peut donc être pénible et utiliser l’algorithme hongrois permet de résoudre en partie ce problème, grâce une complexité polynômiale en N. Il repose sur une recherche du poids d’arrête minimal dans une matrice de coût qui contiendrait tous les poids des arrêtes entre agents et tâches (dans notre cas, entre cluster et classe). Nous utilisons ici cet algorithme ainsi qu'un algorithme naîf parcourant les N! possibilités </p>
+
+##
+
+<p>
+Construction de la matrice de coût
+</p>
+
+<p>
+Nous collectons les données MNIST, ainsi que les classes associées pour obtenir une matrice de coût. Pour ceci, nous effectuons une PCA à 50 dimensions sur les données puis nous clusterisons par k-nn les données obtenues en 10 clusters (le nombre de classe dans MNIST). Nous calculons alors les centres d'inertie des classes et des clusters puis l'on utilise la distance euclidienne entre chaque couple classe/cluster. 
+
+\[
+\text{d}(c, k) = \sqrt{\sum_{l=1}^{50} (c_{l} - k_{l})^2}
+\]
+
+Où :
+- \(c_l\) représente la valeur du centre d'inertie de la classe \(c\) en la l-ème dimension,
+- \(k_l\) représente la valeur du centre d'inertie du cluster \(k\) en la l-ème dimension,
+
+##
+
+<p>
+Optimisation
+</p>
+
+<p>
+La matrice de coût est alors : 
+
+\[
+\text{M} = (d_{ck}) 
+\]
+
+Où :
+- c et k varient entre 1 et 10.
+<p>
+
+La matrice $X$ d'association classe/cluster de taille $(10,10)$ est définie comme :
+
+\[
+X_{ck} = 
+\begin{cases} 
+1 & \text{si la classe } c \text{ et le cluster } k \text{ sont associés} \\
+0 & \text{sinon} 
+\end{cases}
+\]
+
+avec la contrainte qu'il ne doit y avoir qu'un seul $1$ par ligne et des $0$ sur le reste, correspondant à ne pas associer la classe c aux autres clusters. 
+
+\[
+\ \sum_{k=1}^{10} X_{ck} = 1
+\]
+
+##
+
+
+Comme on souhaite aussi qu’un cluster corresponde à une ligne ( éventuellement il est possible de faire concorder plusieurs clusters à une classe et inversement en enlevant les contraintes sur la bijection de notre association), une seconde contrainte est qu’il ne doit y avoir qu’un 1 par ligne et des 0 sur le reste. 
+
+\[
+\ \sum_{c=1}^{10} X_{ck} = 1
+\]
+
+La fonction de coût à minimiser est la somme des produits $X_{kl} \times M_{kl}$ sur $l$ et $k$ :
+
+\[
+\text{Coût(association X)} = \sum_{c=1}^{10} \sum_{k=1}^{10} X_{ck} \times M_{ck}
+\]
+
+Cette fonction correspond au coût de l'association classe/cluster choisie. En la minimisant, on s'assure que l'association permet au maximum de réduire la distance séparant le cluster de la classe.
+
+##
+
+<p>
+Algorithmes de résolution - cas naîf
+</p>
+
+L'algorithme naîf permet de résoudre ce problème brutalement en calculant toutes les sommes de coût possible. C'est-à-dire calculer toutes les associations classes-clusters possibles, additionner leurs coûts et renvoyer l'association qui minimise le coût. La complexité théorique de cet algorithmique est N! où N est le nombre de classes/clusters. En effet, pour la classe 1, il y a 10 clusters possibles. Une fois un cluster choisi, on obtient le premier coefficient de coût. Il reste donc pour la classe 2 9 clusters possibles, 8 pour la classe 3, etc. Ceci donne bien N! associations possibles donc N! somme des coûts possibles, ce qui donne la complexité de cet algorithme. 
+
+##
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
