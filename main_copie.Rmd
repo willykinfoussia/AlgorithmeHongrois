@@ -1,0 +1,374 @@
+---
+title: Correspondance entre classes étiquettées et Clusters prédits par algorithme
+  hongrois
+author: "Willy Kinfoussia, Aurélien Henriques"
+date: "2023-2024 M2DS"
+output:
+  beamer_presentation: default
+  header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{amsfonts}
+  - \usepackage{amssymb}
+  ioslides_presentation:
+    widescreen: yes
+---
+
+##
+
+<p>
+Introduction
+</p>
+
+<p>
+Un problème notable dans l’apprentissage supervisé est la labélisation d’un grand nombre de données afin d’entraîner un modèle. En effet, Il arrive souvent que le nombre de données labelisées soit dérisoire comparément aux données dont l’on dispose au total. Certains algorithmes, par exemple l'algorithme SWAV, permettent de s'affranchir de ce problème en créant une représentation de classe par alteration faible des exemples labélisés, mais ils nécessitent un apprentissage contrastif afin de pouvoir identifier une classe. 
+</p>
+
+<p>
+Les algorithmes de clusterisation non-supervisé peuvent alors permettre de résoudre ce problème, en clusterisant les données par cluster pourvu que nous puissions identifier correctement les clusters aux étiquettes de classe. Dans ce cas, il suffirait alors de s’assurer de la bonne représentation du modèle des différentes classes via les clusters, et d’apposer aux données des clusters les étiquettes de classe issue de l’association cluster/classe.
+</p>
+
+##
+
+<p>
+Dans ce projet, nous proposons d’appliquer l’algorithme hongrois à ce problème. L’algorithme hongrois est un programme qui permet de trouver la meilleure association entre N agents et N tâches à l’aide de poids associés aux arrêtes entre agents et tâches. En pratique, il existe N**2 poids d’arrête et N ! façons différentes d’associer les agents aux tâches. La recherche de l’optimum des associations peut donc être pénible et utiliser l’algorithme hongrois permet de résoudre en partie ce problème, grâce une complexité polynômiale en N. Il repose sur une recherche du poids d’arrête minimal dans une matrice de coût qui contiendrait tous les poids des arrêtes entre agents et tâches (dans notre cas, entre cluster et classe). Nous utilisons ici cet algorithme ainsi qu'un algorithme naîf parcourant les N! possibilités </p>
+
+##
+
+<p>
+Construction de la matrice de coût
+</p>
+
+<p>
+Nous collectons les données MNIST, ainsi que les classes associées pour obtenir une matrice de coût. Pour ceci, nous effectuons une PCA à 50 dimensions sur les données puis nous clusterisons par k-nn les données obtenues en 10 clusters (le nombre de classe dans MNIST). Nous calculons alors les centres d'inertie des classes et des clusters puis l'on utilise la distance euclidienne entre chaque couple classe/cluster. 
+
+\[
+\text{d}(c, k) = \sqrt{\sum_{l=1}^{50} (c_{l} - k_{l})^2}
+\]
+
+Où :
+- \(c_l\) représente la valeur du centre d'inertie de la classe \(c\) en la l-ème dimension,
+- \(k_l\) représente la valeur du centre d'inertie du cluster \(k\) en la l-ème dimension,
+
+##
+
+```{r}
+
+mnist_train <- read.csv(paste0('mnist_test.csv'))
+
+x_train <- mnist_train[, -1]
+y_train <- mnist_train[, 1]
+
+x_train_vec <- x_train / 255
+
+constant_columns <- apply(x_train_vec, 2, function(col) length(unique(col)) == 1)
+x_train_vec <- x_train_vec[, !constant_columns]
+
+pca <- prcomp(x_train_vec, center = TRUE, scale. = TRUE, rank = 50)
+
+x_train_pca <- predict(pca, x_train_vec)
+
+```
+
+##
+
+```{r}
+library(stats)
+
+k <- 10
+
+kmeans_model <- kmeans(x_train_pca, centers = k)
+
+clusters_centroid <- kmeans_model$centers
+
+assignement_cluster <- kmeans_model$cluster
+
+classes_centroid <- list()
+
+```
+
+##
+
+<p>
+Optimisation
+</p>
+
+<p>
+La matrice de coût est alors : 
+
+\[
+\text{M} = (d_{ck}) 
+\]
+
+Où :
+- c et k varient entre 1 et 10.
+<p>
+
+La matrice $X$ d'association classe/cluster de taille $(10,10)$ est définie comme :
+
+\[
+X_{ck} = 
+\begin{cases} 
+1 & \text{si la classe } c \text{ et le cluster } k \text{ sont associés} \\
+0 & \text{sinon} 
+\end{cases}
+\]
+
+avec la contrainte qu'il ne doit y avoir qu'un seul $1$ par ligne et des $0$ sur le reste, correspondant à ne pas associer la classe c aux autres clusters. 
+
+\[
+\ \sum_{k=1}^{10} X_{ck} = 1
+\]
+
+##
+
+```{r}
+for (class_label in 0:(k - 1)) {
+  
+  class_data <- x_train_pca[y_train == class_label, ]
+  
+  centroid <- colMeans(class_data)
+  
+  classes_centroid[[as.character(class_label)]] <- centroid
+}
+
+cost_matrix_mnist <- matrix(0, nrow = k, ncol = k)
+
+for (i in 0:k-1) {
+  for (j in 1:k) {
+
+    distance <- sqrt(sum((classes_centroid[[as.character(i)]] - clusters_centroid[j, ])^2))
+    
+    cost_matrix_mnist[i+1, j] <- distance
+  }
+}
+
+cost_matrix_mnist <- lapply(1:k, function(i) as.vector(cost_matrix_mnist[i, ]))
+
+```
+
+##
+
+```{r}
+
+#Génération de matrice de coût aléatoire
+
+matrice_couts <- function(n) {
+  
+  cost_matrix_random <- matrix(rnorm(n * n, mean = 100, sd = 15), nrow = n, ncol = n)
+  #cost_matrix_random <- pnorm(matrice_gaussienne)
+  liste_matrice <- lapply(1:n, function(i) as.vector(cost_matrix_random[i, ]))
+  
+  return(liste_matrice)
+}
+
+```
+
+##
+
+Comme on souhaite aussi qu’un cluster corresponde à une ligne ( éventuellement il est possible de faire concorder plusieurs clusters à une classe et inversement en enlevant les contraintes sur la bijection de notre association), une seconde contrainte est qu’il ne doit y avoir qu’un 1 par ligne et des 0 sur le reste. 
+
+\[
+\ \sum_{c=1}^{10} X_{ck} = 1
+\]
+
+La fonction de coût à minimiser est la somme des produits $X_{kl} \times M_{kl}$ sur $l$ et $k$ :
+
+\[
+\text{Coût(association X)} = \sum_{c=1}^{10} \sum_{k=1}^{10} X_{ck} \times M_{ck}
+\]
+
+Cette fonction correspond au coût de l'association classe/cluster choisie. En la minimisant, on s'assure que l'association permet au maximum de réduire la distance séparant le cluster de la classe.
+
+##
+
+<p>
+Algorithme naîf
+</p>
+
+L'algorithme naîf permet de résoudre ce problème brutalement en calculant toutes les coûts possibles. C'est-à-dire calculer pour chaque bijection classes-cluster la somme des arrêtes associant un cluster à une classe et renvoyer la bijection qui minimise le coût. La complexité théorique de cet algorithmique est N! où N est le nombre de classes/clusters. En effet, pour la classe 1, il y a 10 clusters possibles. Une fois un cluster choisi, on obtient le premier coefficient de coût. Il reste donc pour la classe 2 9 clusters possibles, 8 pour la classe 3, etc. Ceci donne bien N! associations possibles donc N! somme des coûts possibles, ce qui donne la complexité de cet algorithme. 
+
+##
+
+<p>
+Complexité expérimentale
+</p>
+
+```{r}
+
+temps_execution <- function(n_liste,p,algo) {
+
+  temps <- numeric(length(n_liste))
+  
+  for (j in seq_along(n_liste)) {
+    n <- n_liste[j]
+    cout <- matrice_couts(n)
+    
+    start_time <- Sys.time()
+    
+    for (i in 0:(p-1)) {
+    algo(cout)
+    }
+    
+    end_time <- Sys.time()
+    temps[j] <- (end_time - start_time)/p
+  }
+  return(temps)
+}
+
+```
+
+##
+
+```{r}
+
+library(Rcpp)
+
+sourceCpp("NaiveAlgorithme.cpp")
+
+```
+
+```{r}
+
+liste_dimension <- c(4,5,6,7,8,9,10)
+
+temps_exe <- log(temps_execution(liste_dimension,5,NaiveAlgorithme)) 
+
+plot(log(liste_dimension),temps_exe,xlab='log(nombre de classes)',ylab='log(temps')
+
+```
+
+## 
+
+Comme la complexité théorique est en N! on déduit une régression de 
+\[
+\ log(T)=f(N*log(N)-N)
+\]
+
+avec 
+
+\[
+\ N*(log(N)-N) ≈  log(N!)
+\]
+
+```{r}
+
+logn_n <-(log(liste_dimension)-1)*liste_dimension
+
+reg <- lm(temps_exe~logn_n)
+
+summary(reg)
+
+print("complexité :")
+
+print(coef(reg)[2])
+
+```
+
+##
+
+<p>
+Algorithme hongrois
+</p>
+
+<p>
+Étape 0 : Soustraire le minimum de chaque ligne à tous les éléments de cette ligne, puis soustraire le minimum de chaque colonne à tous les éléments de cette colonne dans la matrice de coût.
+</p>
+
+<p>
+Étape 1 : Sélectionner le maximum de zéros indépendants, c'est-à-dire un seul zéro par ligne et par colonne, en parcourant tous les zéros non sélectionnés et en les sélectionnant s'ils ne partagent pas la même ligne ou colonne qu'un zéro déjà sélectionné.
+</p>
+
+<p>
+Étape 2 : Couvrir chaque colonne ayant un zéro sélectionné. Puis, pour chaque zéro non couvert, marquer la colonne de ce zéro et couvrir la ligne de ce zéro si aucune colonne n'est marquée pour ce zéro. Répéter jusqu'à ce qu'il n'y ait plus de zéros non couverts.
+</p>
+
+<p>
+Étape 3 : Trouver la valeur minimum des éléments non couverts dans la matrice. Ajouter cette valeur à toutes les lignes couvertes et la retirer à toutes les colonnes non couvertes. Recommencer à l'étape 1
+</p>
+
+##
+
+<p>
+Complexité 
+</p>
+
+
+<p>
+Les différentes étapes sont faites avec une complexité de 1 sur la totalité de la matrice de coût donc ont une complexité maximale de O(n^2). De plus, Une itération de ces étapes garantit d'avoir au moins un zéro indépendant, ce qui indique que l'algorithme résout le problème au maximum en n^2 itérations, correspondant au cas le cas le plus extrême, à devoir itérer sur chacun des coefficients de la matrice d'assignation, qui a n^2 coefficients. On en déduit que l'algorithme a une complexité théorique en O(n^4)
+</p>
+
+##
+
+```{r}
+sourceCpp("Hungarian.cpp")
+```
+
+```{r}
+
+temps_exe_hong <- log(temps_execution(liste_dimension,5,Hungarian))
+
+plot(log(liste_dimension),temps_exe_hong,xlab='log(nombre de classes)',ylab='log(temps')
+
+reg <- lm(temps_exe_hong~log(liste_dimension))
+
+summary(reg)
+
+print("complexité polynomiale :")
+
+print(coef(reg)[2])
+
+```
+
+
+##
+
+<p>
+Performances sur MNIST
+</p>
+
+<p>
+On utilise le s clusters associés aux classes pour prédire le test de mnist. Pour ce faire, nous utilisons la matrice d'assignation classe/cluster obtenue pour assigner les classes aux clusters prédits par l'algorithme des k-means. Nous comparons ensuite avec la vraie classe des données test mnist. 
+
+```{r}
+
+#clusters_test <- predict(kmeans_model, newdata = x_test_pca)
+
+# association cluster/classe par Hungarian(cost_matrix_mnist)
+
+
+
+```
+</p>
+
+##
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+cost_matrix <- list(
+  c(8, 6, 5),
+  c(5, 4, 7),
+  c(8, 4, 6)
+)
+naive_adj_matrix <- NaiveAlgorithme(cost_matrix)
+naive_adj_matrix
+```
+
+
+```{r}
+cost_matrix <- list(
+  c(8, 6, 5),
+  c(5, 4, 7),
+  c(8, 4, 6)
+)
+hungarian_adj_matrix <- Hungarian(cost_matrix)
+hungarian_adj_matrix
+```
+
+
+
+
+
+
