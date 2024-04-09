@@ -27,15 +27,6 @@ solve_assignment <- function(cost_matrix) {
   return(assignments)
 }
 
-# Exemple d'utilisation
-cost_matrix <- matrix(c(10, 2, 3, 4,
-                        5, 8, 7, 6,
-                        8, 7, 6, 5,
-                        3, 6, 7, 8), nrow = 4, byrow = TRUE)
-
-assignments <- solve_assignment(cost_matrix)
-print(assignments)
-
 ```
 
 ```{r cleaning, include=FALSE}
@@ -72,15 +63,18 @@ for (n in seq(from = 10, to = 10000, by = 1000)) {
 
 library(ggplot2)
 
-ca_times <- c(0,0.25,0.53,1.44,2.24,3.74,5.47,6.61,7.8,11.22)
+ca_times <- c(0.53,1.44,2.24,3.74,5.47,6.61,7.8,11.22)
 
-x <- c(10,1010,2010,3010,4010,5010,6010,7010,8010,9010)
+x <- c(2010,3010,4010,5010,6010,7010,8010,9010)
 
-data <- data.frame(x = x, y = log(ca_times))
+data <- data.frame(x = log(x), y = log(ca_times))
 
 ggplot(data, aes(x = x, y = y)) +
   geom_point() + 
-  labs(x = "nb de clusters/classe", y = "log (temps)", title = "")
+  labs(x = "log(nb de clusters/classe)", y = "log (temps)", title = "")
+
+model <- lm(log(ca_times)~log(x))
+summary(model)
 ```
 
 ```{r}

@@ -11,6 +11,9 @@ output:
   - \usepackage{amssymb}
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ##
 
@@ -50,6 +53,51 @@ Où :
 
 ##
 
+```{r}
+
+dir='C:/Users/Aurelien/Desktop/M2DS/S2/Algorithmique/' #a changer
+
+mnist_train <-  read.csv(paste0(dir, 'mnist_train.csv'))
+
+mnist_test <-  read.csv(paste0(dir,'AlgorithmeHongrois/mnist_test.csv'))
+
+x_train <- mnist_train[, -1]
+y_train <- mnist_train[, 1]
+x_test <- mnist_test[, -1]
+y_test <- mnist_test[, 1]
+
+x_train_vec <- x_train / 255
+x_test_vec <- x_test / 255
+
+constant_columns <- apply(x_train_vec, 2, function(col) length(unique(col)) == 1)
+x_train_vec <- x_train_vec[, !constant_columns]
+
+pca <- prcomp(x_train_vec, center = TRUE, scale. = TRUE, rank = 50)
+
+x_train_pca <- predict(pca, x_train_vec)
+x_test_pca <- predict(pca, x_test_vec)
+
+```
+
+##
+
+```{r}
+library(stats)
+
+k <- 10
+
+kmeans_model <- kmeans(x_train_pca, centers = k)
+
+clusters_centroid <- kmeans_model$centers
+
+assignement_cluster <- kmeans_model$cluster
+
+classes_centroid <- list()
+
+```
+
+##
+
 <p>
 Optimisation
 </p>
@@ -83,6 +131,49 @@ avec la contrainte qu'il ne doit y avoir qu'un seul $1$ par ligne et des $0$ sur
 
 ##
 
+```{r}
+for (class_label in 0:(k - 1)) {
+  
+  class_data <- x_train_pca[y_train == class_label, ]
+  
+  centroid <- colMeans(class_data)
+  
+  classes_centroid[[as.character(class_label)]] <- centroid
+}
+
+cost_matrix_mnist <- matrix(0, nrow = k, ncol = k)
+
+for (i in 0:k-1) {
+  for (j in 1:k) {
+
+    distance <- sqrt(sum((classes_centroid[[as.character(i)]] - clusters_centroid[j, ])^2))
+    
+    cost_matrix_mnist[i+1, j] <- distance
+  }
+}
+
+cost_matrix_mnist <- lapply(1:k, function(i) as.vector(cost_matrix_mnist[i, ]))
+
+```
+
+##
+
+```{r}
+
+#Génération de matrice de coût aléatoire
+
+matrice_couts <- function(n) {
+  
+  matrice_gaussienne <- matrix(rnorm(n * n), nrow = n, ncol = n)
+  cost_matrix_random <- pnorm(matrice_gaussienne)
+  liste_matrice <- lapply(1:n, function(i) as.vector(cost_matrix_random[i, ]))
+  
+  return(liste_matrice)
+}
+
+```
+
+##
 
 Comme on souhaite aussi qu’un cluster corresponde à une ligne ( éventuellement il est possible de faire concorder plusieurs clusters à une classe et inversement en enlevant les contraintes sur la bijection de notre association), une seconde contrainte est qu’il ne doit y avoir qu’un 1 par ligne et des 0 sur le reste. 
 
@@ -101,16 +192,103 @@ Cette fonction correspond au coût de l'association classe/cluster choisie. En l
 ##
 
 <p>
-Algorithmes de résolution - cas naîf
+Algorithme naîf
 </p>
 
-L'algorithme naîf permet de résoudre ce problème brutalement en calculant toutes les sommes de coût possible. C'est-à-dire calculer toutes les associations classes-clusters possibles, additionner leurs coûts et renvoyer l'association qui minimise le coût. La complexité théorique de cet algorithmique est N! où N est le nombre de classes/clusters. En effet, pour la classe 1, il y a 10 clusters possibles. Une fois un cluster choisi, on obtient le premier coefficient de coût. Il reste donc pour la classe 2 9 clusters possibles, 8 pour la classe 3, etc. Ceci donne bien N! associations possibles donc N! somme des coûts possibles, ce qui donne la complexité de cet algorithme. 
+L'algorithme naîf permet de résoudre ce problème brutalement en calculant toutes les coûts possibles. C'est-à-dire calculer pour chaque bijection classes-cluster la somme des arrêtes associant un cluster à une classe et renvoyer la bijection qui minimise le coût. La complexité théorique de cet algorithmique est N! où N est le nombre de classes/clusters. En effet, pour la classe 1, il y a 10 clusters possibles. Une fois un cluster choisi, on obtient le premier coefficient de coût. Il reste donc pour la classe 2 9 clusters possibles, 8 pour la classe 3, etc. Ceci donne bien N! associations possibles donc N! somme des coûts possibles, ce qui donne la complexité de cet algorithme. 
 
 ##
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+#Algo naif a mettre la-dedans
+
+
 ```
+
+##
+
+<p>
+Complexité expérimentale
+</p>
+
+```{r}
+
+temps_execution <- function(n_liste,p,algo) {
+
+  temps <- numeric(length(n_liste))
+  
+  for (j in seq_along(n_liste)) {
+    n <- n_liste[j]
+    cout <- matrice_couts(n)
+    
+    start_time <- Sys.time()
+    
+    for (i in 0:(p-1)) {
+    algo(cout)
+    }
+    
+    end_time <- Sys.time()
+    temps[j] <- (end_time - start_time)/p
+  }
+  return(temps)
+}
+
+```
+
+##
+
+```{r}
+
+liste_dimension <- c(20,50,100,500,1000)
+
+#temps_exe <- log(temps_execution(liste_dimension,5,algo_naif)) #mettre l'algo naif dedans
+
+#plot(log(liste_dimension),temps_exe,xlab='log(nombre de classes)',ylab='log(temps')
+
+#reg <- lm(temps_exe~log(liste_dimension))
+
+#summary(reg)
+
+#print("complexité polynomiale :")
+
+#print(coef(reg)[2])
+
+```
+
+##
+
+<p>
+Algorithme hongrois
+</p>
+
+<p>
+Étape 0 : Soustraire le minimum de chaque ligne à tous les éléments de cette ligne, puis soustraire le minimum de chaque colonne à tous les éléments de cette colonne dans la matrice de coût.
+</p>
+
+<p>
+Étape 1 : Sélectionner le maximum de zéros indépendants, c'est-à-dire un seul zéro par ligne et par colonne, en parcourant tous les zéros non sélectionnés et en les sélectionnant s'ils ne partagent pas la même ligne ou colonne qu'un zéro déjà sélectionné.
+</p>
+
+<p>
+Étape 2 : Couvrir chaque colonne ayant un zéro sélectionné. Puis, pour chaque zéro non couvert, marquer la colonne de ce zéro et couvrir la ligne de ce zéro si aucune colonne n'est marquée pour ce zéro. Répéter jusqu'à ce qu'il n'y ait plus de zéros non couverts.
+</p>
+
+<p>
+Étape 3 : Trouver la valeur minimum des éléments non couverts dans la matrice. Ajouter cette valeur à toutes les lignes couvertes et la retirer à toutes les colonnes non couvertes. Recommencer à l'étape 1
+</p>
+
+##
+
+<p>
+Complexité 
+</p>
+
+
+<p>
+Les différentes étapes sont faites avec une complexité de 1 sur la totalité de la matrice de coût donc ont une complexité maximale de O(n^2). De plus, Une itération de ces étapes garantit d'avoir au moins un zéro indépendant, ce qui indique que l'algorithme résout le problème au maximum en n^2 itérations, correspondant au cas le cas le plus extrême, à devoir itérer sur chacun des coefficients de la matrice d'assignation, qui a n^2 coefficients. On en déduit que l'algorithme a une complexité théorique en O(n^4)
+</p>
+
+##
 
 ```{r}
 library(Rcpp)
@@ -118,6 +296,43 @@ sourceCpp("Hungarian.cpp")
 sourceCpp("NaiveAlgorithme.cpp")
 ```
 
+```{r}
+
+temps_exe_hong <- log(temps_execution(liste_dimension,5,Hungarian))
+
+plot(log(liste_dimension),temps_exe_hong,xlab='log(nombre de classes)',ylab='log(temps')
+
+reg <- lm(temps_exe_hong~log(liste_dimension))
+
+summary(reg)
+
+print("complexité polynomiale :")
+
+print(coef(reg)[2])
+
+```
+
+##
+
+<p>
+Performances sur MNIST
+</p>
+
+<p>
+On utilise le s clusters associés aux classes pour prédire le test de mnist. Pour ce faire, nous utilisons la matrice d'assignation classe/cluster obtenue pour assigner les classes aux clusters prédits par l'algorithme des k-means. Nous comparons ensuite avec la vraie classe des données test mnist. 
+
+```{r}
+
+clusters_test <- predict(kmeans_model, newdata = x_test_pca)
+
+# association cluster/classe par Hungarian(cost_matrix_mnist)
+
+
+
+```
+</p>
+
+##
 
 ```{r}
 cost_matrix <- list(
