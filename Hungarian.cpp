@@ -7,8 +7,12 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <chrono> // Pour mesurer le temps
+#include <numeric>
+#include <random>
 
 using namespace std;
+using namespace std::chrono;
 
 #include <Rcpp.h>
 using namespace Rcpp;
@@ -734,17 +738,65 @@ vector<vector<int>> Hungarian(vector<vector<int>> matrix, bool verbose = false){
 }
 
 
-int main() //example of usage
-{
-    vector<vector<int>> matrix = {
-    {366, 306, 366, 317, 365, 366},
-    {305, 366, 366, 366, 366, 366},
-    {366, 366, 366, 366, 315, 366},
-    {366, 366, 294, 366, 366, 366},
-    {366, 366, 366, 366, 366, 346},
-    {315, 365, 366, 366, 366, 366}
-    };
+// Fonction pour générer une matrice de taille n x n en fonction de k
+vector<vector<int>> generateMatrix(int n, int k) {
+    // Initialisation de la matrice avec des valeurs nulles
+    vector<vector<int>> matrix(n, vector<int>(n, 0));
 
-    Hungarian(matrix);
+    // Parcours de chaque élément de la matrice
+    for (int i = 0; i < n * n; ++i) {
+        // Calcul du numéro de ligne et de colonne en fonction de l'indice i
+        int row = i / n;
+        int col = i % n;
+
+        // Calcul de la valeur de la cellule en fonction de i, row, col et k
+        matrix[row][col] = i + (row + col) % k;
+    }
+
+    // Retourne la matrice générée
+    return matrix;
+}
+
+int main() {
+    vector<vector<int>> matrix_test = generateMatrix(6, 4);
+    print(matrix_test);
+
+    // Définir la matrice de coût
+    vector<vector<int>> matrix = generateMatrix(1000, 100);
+
+    // Nombre de fois à exécuter l'algorithme
+    int num_executions = 100;
+    
+    // Vecteur pour stocker les temps d'exécution
+    vector<double> execution_times(num_executions);
+
+    // Exécuter l'algorithme plusieurs fois et mesurer le temps d'exécution à chaque fois
+    for (int i = 0; i < num_executions; ++i) {
+        auto start = chrono::steady_clock::now();
+        Hungarian(matrix);
+        auto end = chrono::steady_clock::now();
+        chrono::duration<double, milli> duration = end - start;
+        execution_times[i] = duration.count();
+    }
+
+    // Calculer la moyenne des temps d'exécution
+    double mean_execution_time = accumulate(execution_times.begin(), execution_times.end(), 0.0) / num_executions;
+
+    // Calculer l'écart type
+    double variance = 0.0;
+    for (double time : execution_times) {
+        variance += pow(time - mean_execution_time, 2);
+    }
+    variance /= num_executions;
+    double standard_deviation = sqrt(variance);
+
+    // Calculer l'intervalle de confiance à 95%
+    double confidence_interval = 1.96 * (standard_deviation / sqrt(num_executions));
+
+    // Afficher les résultats
+    cout << "Moyenne du temps d'execution : " << mean_execution_time << " millisecondes" << endl;
+    cout << "Intervalle de confiance (95%) : [" << mean_execution_time - confidence_interval
+              << ", " << mean_execution_time + confidence_interval << "] millisecondes" << endl;
+
     return 0;
 }
