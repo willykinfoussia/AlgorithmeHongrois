@@ -566,9 +566,6 @@ précision <- mean(assignement_classe != y_train) * 100
 print(précision)
 
 ```
-## 
 
 Nous obtenons une efficacité supérieure à 85%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captées par 
 l'algorithme kmeans que l'algorithme hongrois permet de trouver une association cohérente entre les clusters et les classes.
-
-##
