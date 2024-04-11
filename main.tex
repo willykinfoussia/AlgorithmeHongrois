@@ -1,0 +1,1317 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Correspondance entre classes étiquettées et Clusters prédits par algorithme hongrois},
+  pdfauthor={Willy Kinfoussia, Aurélien Henriques},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Correspondance entre classes étiquettées et Clusters prédits par
+algorithme hongrois}
+\author{Willy Kinfoussia, Aurélien Henriques}
+\date{2023-2024 M2DS}
+
+\begin{document}
+\maketitle
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Un problème notable dans l'apprentissage supervisé est la labélisation
+d'un grand nombre de données afin d'entraîner un modèle. En effet, Il
+arrive souvent que le nombre de données labelisées soit dérisoire
+comparément aux données dont l'on dispose au total. Certains
+algorithmes, par exemple l'algorithme SWAV, permettent de s'affranchir
+de ce problème en créant une représentation de classe par alteration
+faible des exemples labélisés, mais ils nécessitent un apprentissage
+contrastif afin de pouvoir identifier une classe.
+
+Les algorithmes de clusterisation non-supervisé peuvent alors permettre
+de résoudre ce problème, en clusterisant les données par cluster pourvu
+que nous puissions identifier correctement les clusters aux étiquettes
+de classe. Dans ce cas, il suffirait alors de s'assurer de la bonne
+représentation du modèle des différentes classes via les clusters, et
+d'apposer aux données des clusters les étiquettes de classe issue de
+l'association cluster/classe.
+
+Dans ce projet, nous proposons d'appliquer l'algorithme hongrois à ce
+problème. L'algorithme hongrois est un programme qui permet de trouver
+la meilleure association entre N agents et N tâches à l'aide de poids
+associés aux arrêtes entre agents et tâches. En pratique, il existe N**2
+poids d'arrête et N ! façons différentes d'associer les agents aux
+tâches. La recherche de l'optimum des associations peut donc être
+pénible et utiliser l'algorithme hongrois permet de résoudre en partie
+ce problème, grâce une complexité polynômiale en N. Il repose sur une
+recherche du poids d'arrête minimal dans une matrice de coût qui
+contiendrait tous les poids des arrêtes entre agents et tâches (dans
+notre cas, entre cluster et classe). Nous utilisons ici cet algorithme
+ainsi qu'un algorithme naîf parcourant les N! possibilités
+
+\hypertarget{construction-de-la-matrice-de-couxfbt}{%
+\subsection{Construction de la matrice de
+coût}\label{construction-de-la-matrice-de-couxfbt}}
+
+Nous collectons les données MNIST, ainsi que les classes associées pour
+obtenir une matrice de coût. Pour ceci, nous effectuons une PCA à 50
+dimensions sur les données puis nous clusterisons par k-nn les données
+obtenues en 10 clusters (le nombre de classe dans MNIST). Nous calculons
+alors les centres d'inertie des classes et des clusters puis l'on
+utilise la distance euclidienne entre chaque couple classe/cluster.
+
+\[
+\text{d}(c, k) = \sqrt{\sum_{l=1}^{50} (c_{l} - k_{l})^2}
+\]
+
+Où : - \(c_l\) représente la valeur du centre d'inertie de la classe
+\(c\) en la l-ème dimension, - \(k_l\) représente la valeur du centre
+d'inertie du cluster \(k\) en la l-ème dimension,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mnist\_train }\OtherTok{\textless{}{-}}  \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}mnist\_test.csv\textquotesingle{}}\NormalTok{)}
+
+\NormalTok{x\_train }\OtherTok{\textless{}{-}}\NormalTok{ mnist\_train[, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\NormalTok{y\_train }\OtherTok{\textless{}{-}}\NormalTok{ mnist\_train[, }\DecValTok{1}\NormalTok{]}
+
+\NormalTok{x\_train\_vec }\OtherTok{\textless{}{-}}\NormalTok{ x\_train }\SpecialCharTok{/} \DecValTok{255}
+
+\NormalTok{constant\_columns }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(x\_train\_vec, }\DecValTok{2}\NormalTok{, }\ControlFlowTok{function}\NormalTok{(col) }\FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(col)) }\SpecialCharTok{==} \DecValTok{1}\NormalTok{)}
+\NormalTok{x\_train\_vec }\OtherTok{\textless{}{-}}\NormalTok{ x\_train\_vec[, }\SpecialCharTok{!}\NormalTok{constant\_columns]}
+
+\NormalTok{pca }\OtherTok{\textless{}{-}} \FunctionTok{prcomp}\NormalTok{(x\_train\_vec, }\AttributeTok{center =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{scale. =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{rank =} \DecValTok{50}\NormalTok{)}
+
+\NormalTok{x\_train\_pca }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(pca, x\_train\_vec)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{section}{%
+\subsection{}\label{section}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(stats)}
+
+\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{10}
+
+\NormalTok{kmeans\_model }\OtherTok{\textless{}{-}} \FunctionTok{kmeans}\NormalTok{(x\_train\_pca, }\AttributeTok{centers =}\NormalTok{ k)}
+
+\NormalTok{clusters\_centroid }\OtherTok{\textless{}{-}}\NormalTok{ kmeans\_model}\SpecialCharTok{$}\NormalTok{centers}
+
+\NormalTok{assignement\_cluster }\OtherTok{\textless{}{-}}\NormalTok{ kmeans\_model}\SpecialCharTok{$}\NormalTok{cluster}
+
+\NormalTok{classes\_centroid }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{optimisation}{%
+\subsection{Optimisation}\label{optimisation}}
+
+La matrice de coût est alors :
+
+\[
+\text{M} = (d_{ck}) 
+\]
+
+Où : - c et k varient entre 1 et 10.
+
+La matrice \(X\) d'association classe/cluster de taille \((10,10)\) est
+définie comme :
+
+\[
+X_{ck} = 
+\begin{cases} 
+1 & \text{si la classe } c \text{ et le cluster } k \text{ sont associés} \\
+0 & \text{sinon} 
+\end{cases}
+\]
+
+avec la contrainte qu'il ne doit y avoir qu'un seul \(1\) par ligne et
+des \(0\) sur le reste, correspondant à ne pas associer la classe c aux
+autres clusters.
+
+\[
+\ \sum_{k=1}^{10} X_{ck} = 1
+\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\NormalTok{ (class\_label }\ControlFlowTok{in} \DecValTok{0}\SpecialCharTok{:}\NormalTok{(k }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)) \{}
+  
+\NormalTok{  class\_data }\OtherTok{\textless{}{-}}\NormalTok{ x\_train\_pca[y\_train }\SpecialCharTok{==}\NormalTok{ class\_label, ]}
+  
+\NormalTok{  centroid }\OtherTok{\textless{}{-}} \FunctionTok{colMeans}\NormalTok{(class\_data)}
+  
+\NormalTok{  classes\_centroid[[}\FunctionTok{as.character}\NormalTok{(class\_label)]] }\OtherTok{\textless{}{-}}\NormalTok{ centroid}
+\NormalTok{\}}
+
+\NormalTok{cost\_matrix\_mnist }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, }\AttributeTok{nrow =}\NormalTok{ k, }\AttributeTok{ncol =}\NormalTok{ k)}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{0}\SpecialCharTok{:}\NormalTok{k}\DecValTok{{-}1}\NormalTok{) \{}
+  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{k) \{}
+
+\NormalTok{    distance }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((classes\_centroid[[}\FunctionTok{as.character}\NormalTok{(i)]] }\SpecialCharTok{{-}}\NormalTok{ clusters\_centroid[j, ])}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))}
+    
+\NormalTok{    cost\_matrix\_mnist[i}\SpecialCharTok{+}\DecValTok{1}\NormalTok{, j] }\OtherTok{\textless{}{-}}\NormalTok{ distance}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{cost\_matrix\_mnist }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\NormalTok{k, }\ControlFlowTok{function}\NormalTok{(i) }\FunctionTok{as.vector}\NormalTok{(cost\_matrix\_mnist[i, ]))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{section-1}{%
+\subsection{}\label{section-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Génération de matrice de coût aléatoire}
+
+\NormalTok{matrice\_couts }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(n) \{}
+  
+\NormalTok{  cost\_matrix\_random }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(n }\SpecialCharTok{*}\NormalTok{ n, }\AttributeTok{mean =} \DecValTok{100}\NormalTok{, }\AttributeTok{sd =} \DecValTok{15}\NormalTok{), }\AttributeTok{nrow =}\NormalTok{ n, }\AttributeTok{ncol =}\NormalTok{ n)}
+\NormalTok{  liste\_matrice }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\NormalTok{n, }\ControlFlowTok{function}\NormalTok{(i) }\FunctionTok{as.vector}\NormalTok{(cost\_matrix\_random[i, ]))}
+  
+  \FunctionTok{return}\NormalTok{(liste\_matrice)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Comme on souhaite aussi qu'un cluster corresponde à une ligne (
+éventuellement il est possible de faire concorder plusieurs clusters à
+une classe et inversement en enlevant les contraintes sur la bijection
+de notre association), une seconde contrainte est qu'il ne doit y avoir
+qu'un 1 par ligne et des 0 sur le reste.
+
+\[
+\ \sum_{c=1}^{10} X_{ck} = 1
+\]
+
+La fonction de coût à minimiser est la somme des produits
+\(X_{kl} \times M_{kl}\) sur \(l\) et \(k\) :
+
+\[
+\text{Coût(association X)} = \sum_{c=1}^{10} \sum_{k=1}^{10} X_{ck} \times M_{ck}
+\]
+
+Cette fonction correspond au coût de l'association classe/cluster
+choisie. En la minimisant, on s'assure que l'association permet au
+maximum de réduire la distance séparant le cluster de la classe.
+
+\hypertarget{algorithme-nauxeef}{%
+\section{Algorithme naîf}\label{algorithme-nauxeef}}
+
+L'algorithme naîf permet de résoudre ce problème brutalement en
+calculant toutes les coûts possibles. C'est-à-dire calculer pour chaque
+bijection classes-cluster la somme des arrêtes associant un cluster à
+une classe et renvoyer la bijection qui minimise le coût. La complexité
+théorique de cet algorithmique est N! où N est le nombre de
+classes/clusters. En effet, pour la classe 1, il y a 10 clusters
+possibles. Une fois un cluster choisi, on obtient le premier coefficient
+de coût. Il reste donc pour la classe 2 9 clusters possibles, 8 pour la
+classe 3, etc. Ceci donne bien N! associations possibles donc N! somme
+des coûts possibles, ce qui donne la complexité de cet algorithme.
+
+\hypertarget{explication-duxe9tailluxe9e-de-lalgorithme}{%
+\subsection{Explication détaillée de l'algorithme
+:}\label{explication-duxe9tailluxe9e-de-lalgorithme}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(Rcpp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: le package 'Rcpp' a été compilé avec la version R 4.3.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sourceCpp}\NormalTok{(}\StringTok{"NaiveAlgorithme.cpp"}\NormalTok{)}
+\FunctionTok{source}\NormalTok{(}\StringTok{"NaiveAlgorithme.R"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{fonction-naivealgorithme}{%
+\subsubsection{Fonction NaiveAlgorithme
+:}\label{fonction-naivealgorithme}}
+
+Cette fonction résout le problème d'affectation en générant toutes les
+permutations possibles de l'assignation et en trouvant celle avec le
+coût minimal. Elle prend en entrée la matrice d'association. Elle
+initialise le vecteur minAssignment pour stocker l'assignation optimale
+avec le coût minimal et le coût minimal lui-même à une valeur maximale.
+Ensuite, elle initialise un vecteur currentAssignment pour stocker
+l'assignation courante. Elle génère tous les indices de permutation de 0
+à n-1. Puis, elle itère à travers toutes les permutations possibles :
+Elle construit l'assignation courante en utilisant les indices de
+permutation. Elle calcule le coût de l'assignation courante en utilisant
+la fonction calculateCost. Elle met à jour l'assignation optimale et le
+coût minimal si le coût de l'assignation courante est inférieur au coût
+minimal actuel. Après avoir exploré toutes les permutations, elle
+renvoie une paire contenant l'assignation avec le coût minimal et le
+coût minimal lui-même.
+
+\hypertarget{fonction-calculatecost}{%
+\subsubsection{Fonction calculateCost :}\label{fonction-calculatecost}}
+
+Cette fonction calcule le coût total d'une affectation donnée en
+fonction de la matrice d'association et de l'assignation. Elle
+initialise le coût total à zéro. Ensuite, elle parcourt chaque ligne de
+la matrice d'association. Pour chaque ligne, elle ajoute le coût de
+l'élément correspondant dans la matrice d'association selon
+l'assignation donnée. Enfin, elle retourne le coût total calculé.
+
+Exemple d'utilisation des packages :
+
+\begin{itemize}
+\tightlist
+\item
+  Package Rcpp :
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cost\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{),}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{, }\DecValTok{9}\NormalTok{, }\DecValTok{7}\NormalTok{),}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{9}\NormalTok{)}
+\NormalTok{)}
+\NormalTok{naive\_adj\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{NaiveAlgorithme}\NormalTok{(cost\_matrix)}
+\NormalTok{naive\_adj\_matrix}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+## [1] 1 0 0
+## 
+## [[2]]
+## [1] 0 0 1
+## 
+## [[3]]
+## [1] 0 1 0
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Package R :
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Exemple d\textquotesingle{}utilisation :}
+\CommentTok{\# Créer une matrice de coût (exemple)}
+\NormalTok{costMatrix }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{9}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{9}\NormalTok{), }\AttributeTok{nrow =} \DecValTok{3}\NormalTok{)}
+
+\CommentTok{\# Appeler l\textquotesingle{}algorithme naïf}
+\FunctionTok{NaiveAlgorithme\_R}\NormalTok{(costMatrix)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    0    1
+## [3,]    0    1    0
+\end{verbatim}
+
+\hypertarget{complexituxe9-thuxe9orique}{%
+\subsection{Complexité Théorique}\label{complexituxe9-thuxe9orique}}
+
+La complexité de l'algorithme naïf est de O(n!), où n est la taille de
+la matrice d'association. Cette complexité est due à la génération de
+toutes les permutations possibles des affectations et au calcul du coût
+pour chaque permutation.
+
+\hypertarget{guxe9nuxe9ration-de-toutes-les-permutations}{%
+\subsubsection{Génération de toutes les permutations
+:}\label{guxe9nuxe9ration-de-toutes-les-permutations}}
+
+\begin{itemize}
+\tightlist
+\item
+  La fonction utilise la fonction next\_permutation, qui génère toutes
+  les permutations possibles des indices de 0 à n-1.
+\item
+  Il y a n! permutations possibles dans le pire des cas, car il y a n
+  éléments à permuter.
+\item
+  La complexité de la génération de chaque permutation est O(n), car
+  elle nécessite un tri lexicographique des indices.
+\end{itemize}
+
+\hypertarget{calcul-du-couxfbt-pour-chaque-permutation}{%
+\subsubsection{Calcul du coût pour chaque permutation
+:}\label{calcul-du-couxfbt-pour-chaque-permutation}}
+
+\begin{itemize}
+\tightlist
+\item
+  Pour chaque permutation générée, le coût de cette permutation est
+  calculé en utilisant la fonction calculateCost.
+\item
+  La fonction calculateCost parcourt chaque ligne de la matrice
+  d'association une fois, ce qui prend O(n).
+\item
+  Dans le pire des cas, la fonction calculateCost est appelée n! fois,
+  une fois pour chaque permutation.
+\end{itemize}
+
+Ainsi, la complexité totale de l'algorithme naïf est de O(n!), car la
+génération de toutes les permutations possibles et le calcul du coût
+pour chaque permutation contribuent tous deux à cette complexité. Cette
+approche est pratique pour de petites tailles de matrices, mais devient
+rapidement inefficace pour des tailles de problèmes plus importantes en
+raison de sa complexité.
+
+\hypertarget{complexituxe9-expuxe9rimentale-rcpp}{%
+\subsection{Complexité expérimentale
+(RCPP)}\label{complexituxe9-expuxe9rimentale-rcpp}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{temps\_execution }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(n\_liste,p,algo) \{}
+  \CommentTok{\#n\_liste correspond aux dimensions des matrtices de couts générées,}
+  \CommentTok{\#p correspond au nombre de fois oû l\textquotesingle{}on exécute l\textquotesingle{}algorithme pour ensuite moyenner le temps}
+
+\NormalTok{  temps }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(}\FunctionTok{length}\NormalTok{(n\_liste))}
+  
+  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(n\_liste)) \{}
+\NormalTok{    n }\OtherTok{\textless{}{-}}\NormalTok{ n\_liste[j]}
+\NormalTok{    cout }\OtherTok{\textless{}{-}} \FunctionTok{matrice\_couts}\NormalTok{(n)}
+    
+\NormalTok{    start\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+    
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{0}\SpecialCharTok{:}\NormalTok{(p}\DecValTok{{-}1}\NormalTok{)) \{}
+    \FunctionTok{algo}\NormalTok{(cout)}
+\NormalTok{    \}}
+    
+\NormalTok{    end\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+\NormalTok{    temps[j] }\OtherTok{\textless{}{-}}\NormalTok{ (end\_time }\SpecialCharTok{{-}}\NormalTok{ start\_time)}\SpecialCharTok{/}\NormalTok{p}
+\NormalTok{  \}}
+  \FunctionTok{return}\NormalTok{(temps)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Pour obtenir la complexité, on détermine la régression log(T)=log(n!).
+Avoir un coefficient de régression de 1 signifierait que l'on a bien la
+même complexité que celle théorique.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{liste\_dimension }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \DecValTok{6}\NormalTok{, }\AttributeTok{to =} \DecValTok{12}\NormalTok{, }\AttributeTok{by =} \DecValTok{1}\NormalTok{)}
+
+\NormalTok{logn\_factorielle }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(}\FunctionTok{factorial}\NormalTok{(liste\_dimension))}
+
+\NormalTok{temps\_exe }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(}\FunctionTok{temps\_execution}\NormalTok{(liste\_dimension,}\DecValTok{5}\NormalTok{,NaiveAlgorithme)) }
+
+\NormalTok{reg }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(temps\_exe}\SpecialCharTok{\textasciitilde{}}\NormalTok{logn\_factorielle)}
+
+\FunctionTok{summary}\NormalTok{(reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = temps_exe ~ logn_factorielle)
+## 
+## Residuals:
+##       1       2       3       4       5       6       7 
+##  1.8841 -1.1107 -0.9355 -0.4476 -0.1928  0.1627  0.6398 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      -15.74929    1.30660 -12.054 6.94e-05 ***
+## logn_factorielle   0.86932    0.09492   9.158  0.00026 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.125 on 5 degrees of freedom
+## Multiple R-squared:  0.9437, Adjusted R-squared:  0.9325 
+## F-statistic: 83.87 on 1 and 5 DF,  p-value: 0.0002602
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(logn\_factorielle,temps\_exe,}\AttributeTok{xlab=}\StringTok{\textquotesingle{}log(nombre de classes)\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}log(temps)\textquotesingle{}}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(logn\_factorielle,}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{+}\NormalTok{logn\_factorielle}\SpecialCharTok{*}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{2}\NormalTok{],}\AttributeTok{lty=}\StringTok{\textquotesingle{}dashed\textquotesingle{}}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(logn\_factorielle,}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{+}\NormalTok{logn\_factorielle,}\AttributeTok{col=}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{,}\AttributeTok{lty=}\StringTok{\textquotesingle{}dashed\textquotesingle{}}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{legend =} \StringTok{"Complexité théorique"}\NormalTok{, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topleft"}\NormalTok{, }\AttributeTok{legend =} \StringTok{"Régression"}\NormalTok{, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{main_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{2}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## logn_factorielle 
+##        0.8693167
+\end{verbatim}
+
+La régression donne des valeurs très proches de 1 avec un R\^{}2=0.99.
+Ainsi, on a bien une complexité en N!.
+
+\hypertarget{complexituxe9-expuxe9rimentale-r}{%
+\subsection{Complexité expérimentale
+(R)}\label{complexituxe9-expuxe9rimentale-r}}
+
+Vérifions maintenant que c'est aussi le cas pour l'algorithme en R:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{temps\_execution\_R }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(n\_liste,p,algo) \{}
+  \CommentTok{\#n\_liste correspond aux dimensions des matrtices de couts générées,}
+  \CommentTok{\#p correspond au nombre de fois oû l\textquotesingle{}on exécute l\textquotesingle{}algorithme pour ensuite moyenner le temps}
+
+\NormalTok{  temps }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(}\FunctionTok{length}\NormalTok{(n\_liste))}
+  
+  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(n\_liste)) \{}
+\NormalTok{    n }\OtherTok{\textless{}{-}}\NormalTok{ n\_liste[j]}
+\NormalTok{    cout }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{unlist}\NormalTok{(}\FunctionTok{matrice\_couts}\NormalTok{(n)), }\AttributeTok{nrow =}\NormalTok{ n, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+    
+\NormalTok{    start\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+    
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{0}\SpecialCharTok{:}\NormalTok{(p}\DecValTok{{-}1}\NormalTok{)) \{}
+    \FunctionTok{algo}\NormalTok{(cout)}
+\NormalTok{    \}}
+    
+\NormalTok{    end\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+\NormalTok{    temps[j] }\OtherTok{\textless{}{-}}\NormalTok{ (end\_time }\SpecialCharTok{{-}}\NormalTok{ start\_time)}\SpecialCharTok{/}\NormalTok{p}
+\NormalTok{  \}}
+  \FunctionTok{return}\NormalTok{(temps)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{liste\_dimension }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \DecValTok{2}\NormalTok{, }\AttributeTok{to =} \DecValTok{7}\NormalTok{, }\AttributeTok{by =} \DecValTok{1}\NormalTok{)}
+
+\NormalTok{logn\_factorielle }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(}\FunctionTok{factorial}\NormalTok{(liste\_dimension))}
+
+\NormalTok{temps\_exe\_R }\OtherTok{\textless{}{-}} \FunctionTok{temps\_execution\_R}\NormalTok{(liste\_dimension,}\DecValTok{5}\NormalTok{,NaiveAlgorithme\_R)}
+
+\NormalTok{log\_temps\_R }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(temps\_exe\_R)}
+
+\NormalTok{reg }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(log\_temps\_R}\SpecialCharTok{\textasciitilde{}}\NormalTok{logn\_factorielle)}
+
+\FunctionTok{summary}\NormalTok{(reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log_temps_R ~ logn_factorielle)
+## 
+## Residuals:
+##         1         2         3         4         5         6 
+## -0.309431  0.238396  0.248896 -0.087056 -0.096219  0.005414 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      -8.85331    0.18325  -48.31 1.10e-06 ***
+## logn_factorielle  1.00303    0.03633   27.61 1.02e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.2405 on 4 degrees of freedom
+## Multiple R-squared:  0.9948, Adjusted R-squared:  0.9935 
+## F-statistic: 762.3 on 1 and 4 DF,  p-value: 1.023e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{2}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## logn_factorielle 
+##         1.003028
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(logn\_factorielle,log\_temps\_R,}\AttributeTok{xlab=}\StringTok{\textquotesingle{}log(nombre de classes)\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}log(temps)\textquotesingle{}}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(logn\_factorielle,}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{+}\NormalTok{logn\_factorielle}\SpecialCharTok{*}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{2}\NormalTok{],}\AttributeTok{lty=}\StringTok{\textquotesingle{}dashed\textquotesingle{}}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(logn\_factorielle,}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{+}\NormalTok{logn\_factorielle,}\AttributeTok{col=}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{,}\AttributeTok{lty=}\StringTok{\textquotesingle{}dashed\textquotesingle{}}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{legend =} \StringTok{"Complexité théorique"}\NormalTok{, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topleft"}\NormalTok{, }\AttributeTok{legend =} \StringTok{"Régression"}\NormalTok{, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{main_files/figure-latex/unnamed-chunk-11-1.pdf} A
+nouveau, le coefficient de régression est proche de 1 avec un
+R\^{}2=0.98. La complexité expérimentale obtenu avec les deux
+algorithmes est donc similaire, et en accord avec la complexité
+théorique en N!.
+
+\hypertarget{vitesse-r-vs-rcpp}{%
+\section{Vitesse R vs RCPP}\label{vitesse-r-vs-rcpp}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# on a défini précédemment temps\_exe\_R \textless{}{-} temps\_execution\_R(liste\_dimension,5,NaiveAlgorithme\_R)}
+\NormalTok{vitesse\_cpp}\OtherTok{\textless{}{-}}\FunctionTok{temps\_execution}\NormalTok{(liste\_dimension,}\DecValTok{5}\NormalTok{,NaiveAlgorithme)}
+
+\FunctionTok{print}\NormalTok{(vitesse\_cpp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7.200241e-06 6.008148e-06 6.389618e-06 8.201599e-06 1.735687e-05
+## [6] 7.739067e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(temps\_exe\_R)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0002101898 0.0010941982 0.0044415951 0.0159486294 0.0953347683
+## [6] 0.7430994034
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(liste\_dimension,temps\_exe\_R}\SpecialCharTok{/}\NormalTok{vitesse\_cpp,}\AttributeTok{xlab=}\StringTok{\textquotesingle{}dimension\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}ratio des temps d"exécution\textquotesingle{}}\NormalTok{,}\AttributeTok{main=}\StringTok{\textquotesingle{}temps d"éxécution R/temps d"execution C++\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{main_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+On constate une différence de magnitude dans les temps d'éxécution:
+comme attendu, le temps d'execution de c++ est beaucoup plus performant.
+A partir de 4 classes/clusters, le facteur entre les deux devient de
+l'ordre du millier, ce qui révèle l'utilité de C++ dans notre cas.
+
+\hypertarget{algorithme-hongrois}{%
+\section{Algorithme Hongrois}\label{algorithme-hongrois}}
+
+L'algorithme hongrois, également connu sous le nom de méthode hongroise
+ou algorithme de Kuhn-Munkres, est un algorithme utilisé pour résoudre
+le problème d'affectation, qui consiste à trouver la meilleure
+correspondance entre deux ensembles d'éléments, tout en minimisant le
+coût total de cette affectation.
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 0 : Soustraire le minimum de chaque ligne à tous les éléments de
+  cette ligne, puis soustraire le minimum de chaque colonne à tous les
+  éléments de cette colonne dans la matrice de coût.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 1 : Sélectionner le maximum de zéros indépendants, c'est-à-dire
+  un seul zéro par ligne et par colonne, en parcourant tous les zéros
+  non sélectionnés et en les sélectionnant s'ils ne partagent pas la
+  même ligne ou colonne qu'un zéro déjà sélectionné.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 2 : Couvrir chaque colonne ayant un zéro sélectionné. Puis, pour
+  chaque zéro non couvert, marquer la colonne de ce zéro et couvrir la
+  ligne de ce zéro si aucune colonne n'est marquée pour ce zéro. Répéter
+  jusqu'à ce qu'il n'y ait plus de zéros non couverts.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 3 : Trouver la valeur minimum des éléments non couverts dans la
+  matrice. Ajouter cette valeur à toutes les lignes couvertes et la
+  retirer à toutes les colonnes non couvertes. Recommencer à l'étape 1
+\end{itemize}
+
+\hypertarget{explication-duxe9tailluxe9e-de-lalgorithme-1}{%
+\subsection{Explication détaillée de l'algorithme
+:}\label{explication-duxe9tailluxe9e-de-lalgorithme-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sourceCpp}\NormalTok{(}\StringTok{"Hungarian.cpp"}\NormalTok{)}
+\FunctionTok{source}\NormalTok{(}\StringTok{"Hungarian.R"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Voici une explication complète du fonctionnement de l'algorithme
+hongrois :
+
+\hypertarget{initialisation}{%
+\subsubsection{Initialisation :}\label{initialisation}}
+
+La fonction Hungarian est appelée, prenant en entrée une matrice de
+coûts matrix qui représente les coûts d'affectation entre deux ensembles
+d'éléments. Cette matrice peut être rectangulaire mais est transformée
+en une matrice carrée pour l'algorithme. Une copie de la matrice
+originale est faite pour sauvegarder les valeurs initiales.
+
+La fonction adjust\_matrix est utilisée pour rendre la matrice d'entrée
+carrée en ajoutant des zéros aux rangées ou aux colonnes supplémentaires
+si nécessaire.
+
+Des vecteurs temporaires sont initialisés pour suivre les affectations
+et les couvertures de lignes et de colonnes. La matrice M est
+initialisée pour stocker les affectations (zéros étoilés et zéros
+primés).
+
+\hypertarget{ituxe9ration-uxe0-travers-les-uxe9tapes-de-lalgorithme}{%
+\subsubsection{Itération à travers les étapes de l'algorithme
+:}\label{ituxe9ration-uxe0-travers-les-uxe9tapes-de-lalgorithme}}
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 1 - Initialisation :
+\end{itemize}
+
+L'algorithme commence par l'étape 1, où il effectue des ajustements sur
+la matrice d'entrée pour garantir qu'elle soit carrée. Il soustrait le
+minimum de chaque ligne de la matrice et le minimum de chaque colonne,
+de sorte que dans chaque ligne et chaque colonne, il y ait au moins un
+zéro. Cela crée une configuration initiale pour l'algorithme.
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 2 - Étoiles dans la matrice :
+\end{itemize}
+
+À l'étape 2, l'algorithme cherche des zéros non couverts dans la matrice
+d'entrée. Si un zéro est trouvé, il est étoilé (marqué). Les lignes et
+les colonnes contenant ces zéros étoilés sont ensuite couvertes
+(marquées). L'algorithme continue à chercher des zéros non couverts
+jusqu'à ce qu'il n'y en ait plus.
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 3 - Couvertures des colonnes :
+\end{itemize}
+
+À l'étape 3, l'algorithme examine les zéros étoilés dans chaque colonne
+de la matrice. Si une colonne contient un zéro étoilé, cette colonne est
+couverte. L'algorithme continue à parcourir les colonnes jusqu'à ce que
+toutes les colonnes contenant des zéros étoilés soient couvertes.
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 4 - Chemins augmentants :
+\end{itemize}
+
+À l'étape 4, l'algorithme cherche à construire des chemins alternés
+(chemins augmentants) à travers les zéros étoilés et primés dans la
+matrice. Ces chemins sont utilisés pour effectuer des changements dans
+les affectations et sont un aspect clé de l'algorithme. L'algorithme
+peut construire plusieurs chemins alternés à partir de zéros étoilés et
+primés.
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 5 - Mise à jour des affectations :
+\end{itemize}
+
+À l'étape 5, l'algorithme met à jour les affectations en utilisant les
+chemins alternés construits à l'étape précédente. Les zéros étoilés sont
+transformés en zéros primés, et les zéros primés sont transformés en
+zéros étoilés. Ensuite, les lignes et les colonnes sont à nouveau
+couvertes.
+
+\begin{itemize}
+\tightlist
+\item
+  Étape 6 - Réduction des coûts :
+\end{itemize}
+
+À l'étape 6, l'algorithme réduit les coûts dans la matrice d'entrée en
+ajoutant ou en soustrayant une valeur spécifique à chaque élément. Cette
+valeur est déterminée en fonction des zéros étoilés et primés et des
+lignes et colonnes couvertes. L'objectif est de rendre la matrice plus
+propice à la recherche de nouvelles affectations.
+
+\hypertarget{fin-de-lituxe9ration}{%
+\subsubsection{Fin de l'itération :}\label{fin-de-lituxe9ration}}
+
+Une fois toutes les étapes terminées, l'algorithme vérifie s'il a trouvé
+une solution optimale. S'il n'y a plus de changements à apporter aux
+affectations, cela signifie qu'une solution optimale a été trouvée, et
+l'algorithme se termine. Sinon, il retourne à l'étape 3 et continue
+l'itération.
+
+L'algorithme sort de la boucle une fois qu'une solution optimale est
+trouvée ou qu'il n'y a plus d'étapes à exécuter.
+
+\hypertarget{fonctions-auxiliaires}{%
+\subsubsection{Fonctions auxiliaires :}\label{fonctions-auxiliaires}}
+
+Diverses fonctions auxiliaires sont utilisées pour effectuer des
+opérations spécifiques, telles que la recherche du plus petit élément
+dans une matrice, la recherche de zéros dans une matrice, la gestion des
+valeurs négatives, etc.
+
+Exemple d'utilisation des packages:
+
+\begin{itemize}
+\tightlist
+\item
+  Package Rcpp:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cost\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{9}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{4}\NormalTok{),}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{3}\NormalTok{),}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{5}\NormalTok{),}
+  \FunctionTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{5}\NormalTok{)}
+\NormalTok{)}
+\NormalTok{hungarian\_adj\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{Hungarian}\NormalTok{(cost\_matrix, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{)}
+
+\NormalTok{hungarian\_adj\_matrix}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+## [1] 0 0 0 1
+## 
+## [[2]]
+## [1] 1 0 0 0
+## 
+## [[3]]
+## [1] 0 0 1 0
+## 
+## [[4]]
+## [1] 0 1 0 0
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Package R:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Définir une matrice d\textquotesingle{}entrée}
+\NormalTok{matrix\_input }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{9}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{5}\NormalTok{), }\AttributeTok{nrow =} \DecValTok{4}\NormalTok{)}
+
+\CommentTok{\# Appliquer l\textquotesingle{}algorithme Hungarian}
+\NormalTok{result }\OtherTok{\textless{}{-}} \FunctionTok{Hungarian\_R}\NormalTok{(matrix\_input, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{)}
+
+\CommentTok{\# Afficher la solution trouvée}
+\FunctionTok{print}\NormalTok{(result)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3] [,4]
+## [1,]    0    0    0    1
+## [2,]    1    0    0    0
+## [3,]    0    0    1    0
+## [4,]    0    1    0    0
+\end{verbatim}
+
+\hypertarget{complexituxe9-thuxe9orique-1}{%
+\subsection{Complexité Théorique}\label{complexituxe9-thuxe9orique-1}}
+
+La complexité de l'algorithme hongrois est de O(n\^{}3), où n est la
+taille de la matrice carrée d'entrée. Cette complexité est due
+principalement à la recherche de chemins augmentants dans le graphe
+bipartite associé à la matrice d'entrée.
+
+\hypertarget{initialisation-1}{%
+\subsubsection{Initialisation :}\label{initialisation-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  Copier la matrice originale : O(n\^{}2)
+\item
+  Ajuster la matrice en une matrice carrée : O(n\^{}2)
+\item
+  Initialiser la matrice masquée M, les vecteurs de couverture des
+  lignes et des colonnes, et d'autres variables temporaires : O(n\^{}2)
+\end{itemize}
+
+\hypertarget{boucle-principale}{%
+\subsubsection{Boucle principale :}\label{boucle-principale}}
+
+\begin{itemize}
+\tightlist
+\item
+  La boucle principale s'exécute jusqu'à ce que l'algorithme soit
+  terminé, ce qui peut prendre plusieurs étapes.
+\item
+  Chaque étape de la boucle principale implique généralement la
+  recherche de chemins augmentants dans le graphe bipartite associé à la
+  matrice d'entrée.
+\item
+  La recherche de chemins augmentants utilise l'algorithme de l'arbre
+  enraciné, qui a une complexité de O(n\^{}3) dans le pire des cas.
+\end{itemize}
+
+\hypertarget{calcul-de-la-solution}{%
+\subsubsection{Calcul de la solution :}\label{calcul-de-la-solution}}
+
+\begin{itemize}
+\tightlist
+\item
+  Une fois que l'algorithme est terminé, la complexité de la dernière
+  étape dépend de la manière dont la solution est extraite de la matrice
+  d'affectation.
+\item
+  Dans certains cas, cela peut impliquer une simple boucle sur la
+  matrice d'affectation, ce qui ajoute une complexité supplémentaire de
+  O(n\^{}2).
+\end{itemize}
+
+Ainsi, la complexité totale de l'algorithme hongrois est dominée par la
+recherche de chemins augmentants, ce qui donne une complexité globale de
+O(n\^{}3). Cette complexité fait de l'algorithme hongrois une méthode
+efficace pour résoudre le problème d'assignation pondérée dans de
+nombreuses applications.
+
+On fonction de l'implementation de l'algorithme hongrois on peut avoir
+une autre complexité :
+
+Les différentes étapes sont faites avec une complexité de 1 sur la
+totalité de la matrice de coût donc ont une complexité maximale de
+O(n\^{}2). De plus, Une itération de ces étapes garantit d'avoir au
+moins un zéro indépendant, ce qui indique que l'algorithme résout le
+problème au maximum en n\^{}2 itérations, correspondant au cas le cas le
+plus extrême, à devoir itérer sur chacun des coefficients de la matrice
+d'assignation, qui a n\^{}2 coefficients. On en déduit que l'algorithme
+a une complexité théorique en O(n\^{}4)
+
+\hypertarget{complexituxe9-expuxe9rimentale}{%
+\subsection{Complexité
+Expérimentale}\label{complexituxe9-expuxe9rimentale}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{liste\_dimension }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \DecValTok{10}\NormalTok{, }\AttributeTok{to =} \DecValTok{450}\NormalTok{, }\AttributeTok{by =} \DecValTok{20}\NormalTok{)}
+
+\NormalTok{temps\_exe\_hong }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(}\FunctionTok{temps\_execution}\NormalTok{(liste\_dimension,}\DecValTok{5}\NormalTok{,Hungarian))}
+
+\NormalTok{reg }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(temps\_exe\_hong}\SpecialCharTok{\textasciitilde{}}\FunctionTok{log}\NormalTok{(liste\_dimension))}
+
+\FunctionTok{summary}\NormalTok{(reg)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = temps_exe_hong ~ log(liste_dimension))
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.04089 -0.34950 -0.01482  0.27527  2.37281 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)          -16.4694     0.8398  -19.61 5.56e-15 ***
+## log(liste_dimension)   2.5720     0.1606   16.02 3.02e-13 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.7181 on 21 degrees of freedom
+## Multiple R-squared:  0.9243, Adjusted R-squared:  0.9207 
+## F-statistic: 256.5 on 1 and 21 DF,  p-value: 3.016e-13
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{log}\NormalTok{(liste\_dimension),temps\_exe\_hong,}\AttributeTok{xlab=}\StringTok{\textquotesingle{}log(nombre de classes)\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}log(temps)\textquotesingle{}}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(logn\_factorielle,}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{+}\NormalTok{logn\_factorielle}\SpecialCharTok{*}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{2}\NormalTok{],}\AttributeTok{lty=}\StringTok{\textquotesingle{}dashed\textquotesingle{}}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(logn\_factorielle,}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{1}\NormalTok{]}\SpecialCharTok{+}\NormalTok{logn\_factorielle}\SpecialCharTok{*}\DecValTok{3}\NormalTok{,}\AttributeTok{col=}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{,}\AttributeTok{lty=}\StringTok{\textquotesingle{}dashed\textquotesingle{}}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{legend =} \StringTok{"Complexité théorique"}\NormalTok{, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topleft"}\NormalTok{, }\AttributeTok{legend =} \StringTok{"Régression"}\NormalTok{, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{pch =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{main_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{coef}\NormalTok{(reg)[}\DecValTok{2}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## log(liste_dimension) 
+##              2.57201
+\end{verbatim}
+
+La complexité expérimentale est là encore en accord avec la complexité
+théorique: nous avons bien un coefficient directeur proche de 3 avec un
+R\^{}2 solide, ce qui indique une complexité en N\^{}3.
+
+\hypertarget{comparaison-de-vitesse-r-et-c}{%
+\section{Comparaison de vitesse R et
+C++}\label{comparaison-de-vitesse-r-et-c}}
+
+Nous générons une matrice de coût identique pour les deux algorithmes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{generateCostMatrix }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(n, k) \{}
+\NormalTok{  matrix }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, n)}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{    matrix[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"numeric"}\NormalTok{, n)}
+    \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{      matrix[[i]][[j]] }\OtherTok{\textless{}{-}}\NormalTok{ (i}\DecValTok{{-}1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{n }\SpecialCharTok{+}\NormalTok{ (j}\DecValTok{{-}1}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ ((i}\DecValTok{{-}1}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ (j}\DecValTok{{-}1}\NormalTok{)) }\SpecialCharTok{\%\%}\NormalTok{ k}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \FunctionTok{return}\NormalTok{(matrix)}
+\NormalTok{\}}
+
+\NormalTok{ConvertMatrixListToMatrix }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(matrixList)\{}
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{matrix}\NormalTok{(}\FunctionTok{unlist}\NormalTok{(matrixList), }\AttributeTok{nrow =} \FunctionTok{length}\NormalTok{(matrixList), }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{))}
+\NormalTok{\}}
+
+\NormalTok{cost\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{ConvertMatrixListToMatrix}\NormalTok{(}\FunctionTok{generateCostMatrix}\NormalTok{(}\DecValTok{6}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Generated Matrix:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Generated Matrix:
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(cost\_matrix)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    0    2    4    6    4    6
+## [2,]    7    9   11    9   11   13
+## [3,]   14   16   14   16   18   20
+## [4,]   21   19   21   23   25   23
+## [5,]   24   26   28   30   28   30
+## [6,]   31   33   35   33   35   37
+\end{verbatim}
+
+Chaque algorithme est exécuté plusieurs fois afin d'obtenir une moyenne
+et un intervalle de confiance.
+
+\hypertarget{test-de-lalgorithme-rcpp}{%
+\section{Test de l'algorithme Rcpp}\label{test-de-lalgorithme-rcpp}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cost\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{generateCostMatrix}\NormalTok{(}\DecValTok{100}\NormalTok{, }\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Nombre de fois à exécuter l\textquotesingle{}algorithme}
+\NormalTok{num\_executions }\OtherTok{\textless{}{-}} \DecValTok{100}
+
+\CommentTok{\# Vecteur pour stocker les temps d\textquotesingle{}exécution}
+\NormalTok{execution\_times }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(num\_executions)}
+
+\CommentTok{\# Exécuter l\textquotesingle{}algorithme plusieurs fois et mesurer le temps d\textquotesingle{}exécution à chaque fois}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_executions) \{}
+\NormalTok{  start\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+  \CommentTok{\# Appeler la fonction pour exécuter l\textquotesingle{}algorithme hongrois}
+\NormalTok{  hungarian\_adj\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{Hungarian}\NormalTok{(cost\_matrix)}
+\NormalTok{  end\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+\NormalTok{  execution\_times[i] }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(end\_time }\SpecialCharTok{{-}}\NormalTok{ start\_time, }\AttributeTok{units =} \StringTok{"secs"}\NormalTok{) }\SpecialCharTok{*} \DecValTok{1000}  \CommentTok{\# en millisecondes}
+\NormalTok{\}}
+
+\CommentTok{\# Calculer la moyenne des temps d\textquotesingle{}exécution}
+\NormalTok{mean\_execution\_time }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(execution\_times)}
+
+\CommentTok{\# Calculer l\textquotesingle{}écart type}
+\NormalTok{standard\_deviation }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(execution\_times)}
+
+\CommentTok{\# Calculer l\textquotesingle{}intervalle de confiance à 95\%}
+\NormalTok{confidence\_interval }\OtherTok{\textless{}{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ (standard\_deviation }\SpecialCharTok{/} \FunctionTok{sqrt}\NormalTok{(num\_executions))}
+
+\CommentTok{\# Afficher les résultats}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Moyenne du temps d\textquotesingle{}exécution :"}\NormalTok{, mean\_execution\_time, }\StringTok{"millisecondes}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Moyenne du temps d'exécution : 0.2897 millisecondes
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Intervalle de confiance (95\%) : ["}\NormalTok{, mean\_execution\_time }\SpecialCharTok{{-}}\NormalTok{ confidence\_interval,}
+    \StringTok{","}\NormalTok{, mean\_execution\_time }\SpecialCharTok{+}\NormalTok{ confidence\_interval, }\StringTok{"] millisecondes}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Intervalle de confiance (95%) : [ 0.2539486 , 0.3254515 ] millisecondes
+\end{verbatim}
+
+\hypertarget{test-de-lalgorithme-r}{%
+\section{Test de l'algorithme R}\label{test-de-lalgorithme-r}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cost\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{ConvertMatrixListToMatrix}\NormalTok{(}\FunctionTok{generateCostMatrix}\NormalTok{(}\DecValTok{100}\NormalTok{, }\DecValTok{10}\NormalTok{))}
+
+\CommentTok{\# Nombre de fois à exécuter l\textquotesingle{}algorithme}
+\NormalTok{num\_executions }\OtherTok{\textless{}{-}} \DecValTok{100}
+
+\CommentTok{\# Vecteur pour stocker les temps d\textquotesingle{}exécution}
+\NormalTok{execution\_times }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(num\_executions)}
+
+\CommentTok{\# Exécuter l\textquotesingle{}algorithme plusieurs fois et mesurer le temps d\textquotesingle{}exécution à chaque fois}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_executions) \{}
+\NormalTok{  start\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+  \CommentTok{\# Appeler la fonction pour exécuter l\textquotesingle{}algorithme hongrois}
+\NormalTok{  hungarian\_adj\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{Hungarian\_R}\NormalTok{(cost\_matrix)}
+\NormalTok{  end\_time }\OtherTok{\textless{}{-}} \FunctionTok{Sys.time}\NormalTok{()}
+\NormalTok{  execution\_times[i] }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(end\_time }\SpecialCharTok{{-}}\NormalTok{ start\_time, }\AttributeTok{units =} \StringTok{"secs"}\NormalTok{) }\SpecialCharTok{*} \DecValTok{1000}  \CommentTok{\# en millisecondes}
+\NormalTok{\}}
+
+\CommentTok{\# Calculer la moyenne des temps d\textquotesingle{}exécution}
+\NormalTok{mean\_execution\_time }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(execution\_times)}
+
+\CommentTok{\# Calculer l\textquotesingle{}écart type}
+\NormalTok{standard\_deviation }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(execution\_times)}
+
+\CommentTok{\# Calculer l\textquotesingle{}intervalle de confiance à 95\%}
+\NormalTok{confidence\_interval }\OtherTok{\textless{}{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ (standard\_deviation }\SpecialCharTok{/} \FunctionTok{sqrt}\NormalTok{(num\_executions))}
+
+\CommentTok{\# Afficher les résultats}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Moyenne du temps d\textquotesingle{}exécution :"}\NormalTok{, mean\_execution\_time, }\StringTok{"millisecondes}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Moyenne du temps d'exécution : 9.936833 millisecondes
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Intervalle de confiance (95\%) :"}\NormalTok{, mean\_execution\_time }\SpecialCharTok{{-}}\NormalTok{ confidence\_interval,}
+    \StringTok{"à"}\NormalTok{, mean\_execution\_time }\SpecialCharTok{+}\NormalTok{ confidence\_interval, }\StringTok{"millisecondes}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Intervalle de confiance (95%) : 9.437728 à 10.43594 millisecondes
+\end{verbatim}
+
+Pour l'algorithme hongrois en R, nous observons approximativement :
+
+\begin{itemize}
+\tightlist
+\item
+  Moyenne du temps d'exécution : 45.04352 millisecondes
+\item
+  Intervalle de confiance (95\%) : 43.7405 à 46.34653 millisecondes
+\end{itemize}
+
+Pour l'algorithme hongrois en Rcpp, nous observons approximativement :
+
+\begin{itemize}
+\tightlist
+\item
+  Moyenne du temps d'exécution : 0.2169228 millisecondes
+\item
+  Intervalle de confiance (95\%) : 0.1989332 à 0.2349123 millisecondes
+\end{itemize}
+
+Tandis que pour l'algorithme hongrois en C++, nous obtenons environ :
+
+\begin{itemize}
+\tightlist
+\item
+  Moyenne du temps d'execution : 0.79411 millisecondes
+\item
+  Intervalle de confiance (95\%) : {[}0.343787, 1.24443{]} millisecondes
+\end{itemize}
+
+Ces résultats mettent en évidence l'impact significatif de
+l'implémentation sur les performances des algorithmes, montrant
+clairement l'avantage de l'implémentation en Rcpp en termes de vitesse
+d'exécution.
+
+\hypertarget{performances-sur-mnist}{%
+\section{Performances sur MNIST}\label{performances-sur-mnist}}
+
+On utilise les clusters associés aux classes pour prédire le test de
+mnist. Pour ce faire, nous utilisons la matrice d'assignation
+classe/cluster obtenue pour assigner les classes aux clusters prédits
+par l'algorithme des k-means. Nous comparons ensuite avec la vraie
+classe des données test mnist avec celle prédite par cette association.
+
+\hypertarget{section-2}{%
+\subsection{}\label{section-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{assignation }\OtherTok{\textless{}{-}} \FunctionTok{Hungarian}\NormalTok{(cost\_matrix\_mnist) }\CommentTok{\# matrice bijection classes/clusters trouvés par l\textquotesingle{}algorithme hongrois}
+
+\NormalTok{association }\OtherTok{\textless{}{-}}\FunctionTok{numeric}\NormalTok{(k) }\CommentTok{\# version liste de la bijection}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(assignation)) \{}
+  
+\NormalTok{  association[i] }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(assignation[[i]] }\SpecialCharTok{==} \DecValTok{1}\NormalTok{)}
+\NormalTok{\}}
+
+\NormalTok{assignement\_classe}\OtherTok{\textless{}{-}}\NormalTok{association[assignement\_cluster] }\CommentTok{\# assignement des données à des classes prédites par la bijection}
+
+\NormalTok{précision }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(assignement\_classe }\SpecialCharTok{!=}\NormalTok{ y\_train) }\SpecialCharTok{*} \DecValTok{100} 
+
+\FunctionTok{print}\NormalTok{(précision)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 94.57
+\end{verbatim}
+
+Nous obtenons une efficacité supérieure à 95\%. Nous pouvons donc
+supposer au-dela du fait que la structure des classes est bien captée
+par l'algorithme kmeans que l'algorithme hongrois permet de trouver une
+association cohérente entre les clusters et les classes. On peut donc
+potentiellement se reposer sur celui-ci pour labeliser de nouvelles
+données après clusterisations.
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+Nous avons pu appliquer l'algorithme hongrois à l'association de classes
+de données et de clusters prédits par kmean. pour ceci, nous avons
+défini une matrice de coût basée sur la distance euclidienne entre
+centroîdes des classes et des clusters puis nous avons appliquer un
+algorithme naîf de résolution de l'association qui s'est averé très
+demandeur en ressources du fait de sa complexité factorielle. Nous avons
+donc appliquer l'algorithme hongrois qui réduit la complexité à une
+puissance polynomiale de la dimension et avons pu remarquer qu'utiliser
+RCPP était largement avantageux en terme de rapidité. Enfin, une
+comparaison entre les associations obtenues et les classes réelles ont
+montrées que l'algorithme hongrois permettait effectivement de trouver
+une solution optimale.
+
+\end{document}
