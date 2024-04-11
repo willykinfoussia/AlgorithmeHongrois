@@ -260,7 +260,7 @@ void find_uncovered_zero(int& row, int& col, const vector<vector<T>>& matrix, co
     bool found = false; // Indicateur pour indiquer si un zéro a été trouvé
     row = -1; // Initialisation de l'indice de ligne du zéro trouvé à -1
     col = -1; // Initialisation de l'indice de colonne du zéro trouvé à -1
-    
+
     // Boucle pour parcourir la matrice
     while (!found) {
         current_col = 0; // Réinitialiser l'indice de colonne à 0
@@ -360,8 +360,9 @@ void step4(const vector<vector<T>>& matrix, vector<vector<int>>& M, vector<int>&
     bool done = false; // Variable de terminaison de la boucle
 
     while (!done) { // Boucle jusqu'à ce qu'un zéro non couvert soit trouvé ou que toute la matrice soit parcourue
+
         find_uncovered_zero(row, col, matrix, RowCover, ColCover); // Trouver un zéro non couvert dans la matrice
-        
+
         if (row == -1) { // Si aucun zéro non couvert n'est trouvé dans la matrice
             done = true; // Indiquer que la recherche est terminée
             step = 6; // Passer à l'étape 6 de l'algorithme
@@ -491,6 +492,7 @@ void step5(vector<vector<int>>& path, int path_row_0, int path_col_0, vector<vec
     // Ajouter le zéro primarisé initial à la série
     path[path_count - 1][0] = path_row_0;
     path[path_count - 1][1] = path_col_0;
+
     
     bool done = false; // Variable de terminaison de la boucle
     while (!done) { // Tant que la série n'est pas terminée

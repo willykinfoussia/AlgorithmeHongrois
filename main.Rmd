@@ -411,7 +411,9 @@ cost_matrix <- list(
   c(1, 9, 7),
   c(8, 1, 9)
 )
-hungarian_adj_matrix <- Hungarian(cost_matrix, verbose = TRUE)
+hungarian_adj_matrix <- Hungarian(cost_matrix, verbose = FALSE)
+
+print("Matrice solution :")
 hungarian_adj_matrix
 ```
 
@@ -419,12 +421,11 @@ hungarian_adj_matrix
 # Définir une matrice d'entrée
 matrix_input <- matrix(c(9, 1, 8, 1, 9, 1, 5, 7, 9), nrow = 3)
 
-print(matrix_input[3, ])
 # Appliquer l'algorithme Hungarian
-result <- Hungarian_R(matrix_input, verbose = TRUE)
+result <- Hungarian_R(matrix_input, verbose = FALSE)
 
 # Afficher la solution trouvée
-print("Matrice de solution :")
+print("Matrice solution :")
 print(result)
 ```
 
@@ -551,7 +552,7 @@ cat("Intervalle de confiance (95%) :", mean_execution_time - confidence_interval
     "à", mean_execution_time + confidence_interval, "millisecondes\n")
 ```
 
-Pour l'algorithme hongrois en R, nous observons approximativement :
+Pour l'algorithme hongrois en Rcpp, nous observons approximativement :
 
 - Moyenne du temps d'exécution : 36.61147 millisecondes
 - Intervalle de confiance (95 %) : 34.08878 à 39.13415 millisecondes
