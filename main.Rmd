@@ -243,15 +243,17 @@ La complexité de l'algorithme naïf est de O(n!), où n est la taille de la mat
 </p>
 
 <p>
-Ainsi, la complexité totale de l'algorithme naïf est de O(n!), car la génération de toutes les permutations possibles et le calcul du coût pour chaque permutation contribuent tous deux à cette complexité. Cette approche est pratique pour de petites tailles de matrices, mais devient rapidement inefficace pour des tailles de problèmes plus importantes en raison de sa complexité exponentielle.
+Ainsi, la complexité totale de l'algorithme naïf est de O(n!), car la génération de toutes les permutations possibles et le calcul du coût pour chaque permutation contribuent tous deux à cette complexité. Cette approche est pratique pour de petites tailles de matrices, mais devient rapidement inefficace pour des tailles de problèmes plus importantes en raison de sa complexité.
 </p>
 
 <p>
-## Complexité expérimentale
+## Complexité expérimentale (RCPP)
 </p>
 
 ```{r}
 temps_execution <- function(n_liste,p,algo) {
+  #n_liste correspond aux dimensions des matrtices de couts générées,
+  #p correspond au nombre de fois oû l'on exécute l'algorithme pour ensuite moyenner le temps
 
   temps <- numeric(length(n_liste))
   
@@ -272,25 +274,104 @@ temps_execution <- function(n_liste,p,algo) {
 }
 ```
 
-Pour obtenir la complexité, on détermine la régression log(T)=f(n*log(n)-n) où l'on a utilisé la formule de stirling par simplicité:
+Pour obtenir la complexité, on détermine la régression log(T)=log(n!). Avoir un coefficient de régression de 1 signifierait que l'on a bien la même complexité que celle théorique. 
 
 ```{r}
-liste_dimension <- seq(from = 5, to = 12, by = 1)
+liste_dimension <- seq(from = 6, to = 12, by = 1)
 
-logn_n <- (log(liste_dimension)-1)*liste_dimension
+logn_factorielle <- log(factorial(liste_dimension))
 
 temps_exe <- log(temps_execution(liste_dimension,5,NaiveAlgorithme)) 
 
-plot(log(liste_dimension),temps_exe,xlab='log(nombre de classes)',ylab='log(temps)')
-
-reg <- lm(temps_exe~logn_n)
+reg <- lm(temps_exe~logn_factorielle)
 
 summary(reg)
+
+plot(logn_factorielle,temps_exe,xlab='log(nombre de classes)',ylab='log(temps)')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle*coef(reg)[2],lty='dashed')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle,col='red',lty='dashed')
+legend("right", legend = "Complexité théorique", col = "red", pch = 1)
+legend("topleft", legend = "Régression", col = "blue", pch = 1)
 
 print(coef(reg)[2])
 ```
 
-La régression donne des valeurs proches de 1 (0.88-0.94) avec un R^2>0.88. Ainsi, on a bien une complexité en N! par équivalence avec n*log(n)-n. 
+
+La régression donne des valeurs très proches de 1 avec un R^2=0.999. Ainsi, on a bien une complexité en N!. 
+
+<p>
+## Complexité expérimentale (R)
+</p>
+Vérifions maintenant que c'est aussi le cas pour l'algorithme en R:
+
+```{r}
+
+temps_execution_R <- function(n_liste,p,algo) {
+  #n_liste correspond aux dimensions des matrtices de couts générées,
+  #p correspond au nombre de fois oû l'on exécute l'algorithme pour ensuite moyenner le temps
+
+  temps <- numeric(length(n_liste))
+  
+  for (j in seq_along(n_liste)) {
+    n <- n_liste[j]
+    cout <- matrix(unlist(matrice_couts(n)), nrow = n, byrow = TRUE)
+    
+    start_time <- Sys.time()
+    
+    for (i in 0:(p-1)) {
+    algo(cout)
+    }
+    
+    end_time <- Sys.time()
+    temps[j] <- (end_time - start_time)/p
+  }
+  return(temps)
+}
+```
+
+```{r}
+
+liste_dimension <- seq(from = 2, to = 7, by = 1)
+
+logn_factorielle <- log(factorial(liste_dimension))
+
+temps_exe_R <- temps_execution_R(liste_dimension,5,NaiveAlgorithme_R)
+
+log_temps_R <- log(temps_exe_R)
+
+reg <- lm(log_temps_R~logn_factorielle)
+
+summary(reg)
+
+print(coef(reg)[2])
+
+plot(logn_factorielle,log_temps_R,xlab='log(nombre de classes)',ylab='log(temps)')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle*coef(reg)[2],lty='dashed')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle,col='red',lty='dashed')
+legend("right", legend = "Complexité théorique", col = "red", pch = 1)
+legend("topleft", legend = "Régression", col = "blue", pch = 1)
+
+
+```
+A nouveau, le coefficient de régression est proche de 1 (0.95) avec un R^2=0.98. La complexité expérimentale obtenu avec les deux algorithmes est donc similaire, et en accord avec la complexité théorique en N!. 
+
+<p>
+# Vitesse R vs RCPP
+</p>
+
+```{r}
+
+# on a défini précédemment temps_exe_R <- temps_execution_R(liste_dimension,5,NaiveAlgorithme_R)
+vitesse_cpp<-temps_execution(liste_dimension,5,NaiveAlgorithme)
+
+print(vitesse_cpp)
+print(temps_exe_R)
+
+plot(liste_dimension,temps_exe_R/vitesse_cpp,xlab='dimension',ylab='ratio des temps d"exécution',main='temps d"éxécution R/temps d"execution C++')
+
+```
+
+On constate une différence de magnitude dans les temps d'éxécution: comme attendu, le temps d'execution de c++ est beaucoup plus performant. A partir de 4 classes/clusters, le facteur entre les deux devient de l'ordre du millier, ce qui révèle l'utilité de C++ dans notre cas. 
 
 <p>
 # Algorithme Hongrois
@@ -591,5 +672,5 @@ print(précision)
 
 ```
 
-Nous obtenons une efficacité supérieure à 85%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captées par 
+Nous obtenons une efficacité supérieure à 85%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captée par 
 l'algorithme kmeans que l'algorithme hongrois permet de trouver une association cohérente entre les clusters et les classes.
