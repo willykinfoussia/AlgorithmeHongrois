@@ -1,5 +1,4 @@
 
-
 copy_matrix <- function(src, dst) {
   dst <- list()  # Effacer le contenu de la matrice de destination
   
@@ -193,7 +192,7 @@ step4 <- function(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step) {
     if (row == -1) {  # Si aucun zéro non couvert n'est trouvé dans la matrice
       done <- TRUE  # Indiquer que la recherche est terminée
       step <- 6  # Passer à l'étape 6 de l'algorithme
-      return(list(step = step, row = NULL, col = NULL, M = M))
+      return(list(step = step, row = NULL, col = NULL, M = M,  RowCover = RowCover, ColCover = ColCover))
     } else {  # Si un zéro non couvert est trouvé dans la matrice
       M[row, col] <- 2  # Primariser ce zéro
       if (has_starred_zero_in_row(row, M)) {  # Si un zéro étoilé existe dans la ligne contenant ce zéro primarisé
@@ -305,34 +304,20 @@ step5 <- function(path, path_row_0, path_col_0, M, RowCover, ColCover, step) {
   return(list(step = step, M = M, RowCover = RowCover, ColCover = ColCover))
 }
 
-find_smallest <- function(minval, matrix, RowCover, ColCover) {
-  for (r in 1:length(matrix)) {  # Parcourir chaque ligne de la matrice
-    for (c in 1:length(matrix)) {  # Parcourir chaque colonne de la matrice
-      # Vérifier si la valeur à la position [r][c] est non couverte par les vecteurs de couverture
-      if (RowCover[r] == 0 && ColCover[c] == 0) {
-        # Si la valeur est plus petite que la valeur minimale actuelle, mettre à jour la valeur minimale
-        if (minval > matrix[[r]][[c]]) {
-          minval <- matrix[[r]][[c]]
-        }
-      }
-    }
-  }
-}
-
-step6 <- function(matrix, row_cover, col_cover, step) {
+step6 <- function(matrix, RowCover, ColCover, step) {
   # Trouver la plus petite valeur non couverte dans la matrice
-  min_value <- min(matrix[which(row_cover == 0), which(col_cover == 0)], na.rm = TRUE)
+  min_value <- min(matrix[which(RowCover == 0), which(ColCover == 0)], na.rm = TRUE)
   
   size <- nrow(matrix)
   # Parcourir chaque élément de la matrice
   for (r in 1:size) {
     for (c in 1:size) {
       # Si la ligne est couverte, ajouter la plus petite valeur non couverte à chaque élément de la ligne
-      if (row_cover[r] == 1) {
+      if (RowCover[r] == 1) {
         matrix[r, c] <- matrix[r, c] + min_value
       }
       # Si la colonne n'est pas couverte, soustraire la plus petite valeur non couverte à chaque élément de la colonne
-      if (col_cover[c] == 0) {
+      if (ColCover[c] == 0) {
         matrix[r, c] <- matrix[r, c] - min_value
       }
     }
@@ -427,6 +412,7 @@ Hungarian_R <- function(matrix, verbose = FALSE) {
         print("----------Step : 5")
       }
     }else if(step == 6){
+      
       result <- step6(matrix, RowCover, ColCover, step)
       step <- result$step
       matrix <- result$matrix

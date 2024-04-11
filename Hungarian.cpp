@@ -731,7 +731,7 @@ int main() {
     print(matrix_test);
 
     // Définir la matrice de coût
-    vector<vector<int>> matrix = generateMatrix(1000, 100);
+    vector<vector<int>> matrix = generateMatrix(100, 10);
 
     // Nombre de fois à exécuter l'algorithme
     int num_executions = 100;
