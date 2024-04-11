@@ -59,7 +59,6 @@ pca <- prcomp(x_train_vec, center = TRUE, scale. = TRUE, rank = 50)
 x_train_pca <- predict(pca, x_train_vec)
 ```
 
-##
 
 ```{r}
 library(stats)
@@ -132,7 +131,6 @@ for (i in 0:k-1) {
 cost_matrix_mnist <- lapply(1:k, function(i) as.vector(cost_matrix_mnist[i, ]))
 ```
 
-##
 
 ```{r}
 #Génération de matrice de coût aléatoire
@@ -617,7 +615,7 @@ Tandis que pour l'algorithme hongrois en C++, nous obtenons environ :
 - Moyenne du temps d'execution : 0.79411 millisecondes
 - Intervalle de confiance (95%) : [0.343787, 1.24443] millisecondes
 
-Ces résultats mettent en évidence l'impact significatif de l'implémentation sur les performances des algorithmes, montrant clairement l'avantage de l'implémentation en R en termes de vitesse d'exécution.
+Ces résultats mettent en évidence l'impact significatif de l'implémentation sur les performances des algorithmes, montrant clairement l'avantage de l'implémentation en C++ en termes de vitesse d'exécution.
 
 <p>
 # Performances sur MNIST
@@ -629,23 +627,24 @@ On utilise les clusters associés aux classes pour prédire le test de mnist. Po
 ##
 
 ```{r}
+# matrice bijection classes/clusters trouvés par l'algorithme hongrois
+assignation <- Hungarian(cost_matrix_mnist)
 
-assignation <- Hungarian(cost_matrix_mnist) # matrice bijection classes/clusters trouvés par l'algorithme hongrois
-
-association <-numeric(k) # version liste de la bijection
+ # version liste de la bijection
+association <-numeric(k)
 
 for (i in seq_along(assignation)) {
   
   association[i] <- which(assignation[[i]] == 1)
 }
 
-assignement_classe<-association[assignement_cluster] # assignement des données à des classes prédites par la bijection
+# assignement des données à des classes prédites par la bijection
+assignement_classe<-association[assignement_cluster] 
 
 précision <- mean(assignement_classe != y_train) * 100 
 
 print(précision)
-
 ```
 
-Nous obtenons une efficacité supérieure à 85%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captées par 
+Nous obtenons une efficacité supérieure à 90%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captées par 
 l'algorithme kmeans que l'algorithme hongrois permet de trouver une association cohérente entre les clusters et les classes.
