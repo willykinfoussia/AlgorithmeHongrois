@@ -302,7 +302,7 @@ print(coef(reg)[2])
 ```
 
 
-La régression donne des valeurs très proches de 1 avec un R^2=0.99. Ainsi, on a bien une complexité en N!. 
+La régression donne des valeurs proches de 1 avec un R^2 d'environ 94 Ainsi, on a bien une complexité en N!. 
 
 <p>
 ## Complexité expérimentale (R)
@@ -358,7 +358,8 @@ legend("topleft", legend = "Régression", col = "blue", pch = 1)
 
 
 ```
-A nouveau, le coefficient de régression est proche de 1 avec un R^2=0.98. La complexité expérimentale obtenu avec les deux algorithmes est donc similaire, et en accord avec la complexité théorique en N!. 
+
+A nouveau, le coefficient de régression est proche de 1 avec un R^2 d'environ 0.97. La complexité expérimentale obtenu avec les deux algorithmes est donc similaire, et en accord avec la complexité théorique en N!. 
 
 <p>
 # Vitesse R vs RCPP
@@ -519,6 +520,7 @@ legend("topleft", legend = "Régression", col = "blue", pch = 1)
 
 print(coef(reg)[2])
 ```
+
 La complexité expérimentale est là encore en accord avec la complexité théorique: nous avons bien un coefficient directeur proche de 3 avec un R^2 solide, ce qui indique une complexité en N^3. 
 
 <p>
