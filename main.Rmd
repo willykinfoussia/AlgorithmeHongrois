@@ -175,6 +175,7 @@ L'algorithme naîf permet de résoudre ce problème brutalement en calculant tou
 ```{r}
 library(Rcpp)
 sourceCpp("NaiveAlgorithme.cpp")
+source("NaiveAlgorithme.R")
 ```
 
 <p>
@@ -198,12 +199,21 @@ Exemple d'utilisation du package :
 
 ```{r}
 cost_matrix <- list(
-  c(1, 1.2, 5.2),
-  c(5.2, 9.1, 7.2),
-  c(8.2, 1.2, 9.1)
+  c(1, 1, 5),
+  c(5, 9, 7),
+  c(8, 1, 9)
 )
 naive_adj_matrix <- NaiveAlgorithme(cost_matrix)
 naive_adj_matrix
+```
+
+```{r}
+# Exemple d'utilisation :
+# Créer une matrice de coût (exemple)
+costMatrix <- matrix(c(1, 1, 5, 5, 9, 7, 8, 1, 9), nrow = 3)
+
+# Appeler l'algorithme naïf
+NaiveAlgorithme_R(costMatrix)
 ```
 
 <p>
@@ -312,6 +322,7 @@ L'algorithme hongrois, également connu sous le nom de méthode hongroise ou alg
 
 ```{r}
 sourceCpp("Hungarian.cpp")
+source("Hungarian.R")
 ```
 
 <p>
@@ -400,8 +411,21 @@ cost_matrix <- list(
   c(1, 9, 7),
   c(8, 1, 9)
 )
-hungarian_adj_matrix <- Hungarian(cost_matrix)
+hungarian_adj_matrix <- Hungarian(cost_matrix, verbose = TRUE)
 hungarian_adj_matrix
+```
+
+```{r}
+# Définir une matrice d'entrée
+matrix_input <- matrix(c(9, 1, 8, 1, 9, 1, 5, 7, 9), nrow = 3)
+
+print(matrix_input[3, ])
+# Appliquer l'algorithme Hungarian
+result <- Hungarian_R(matrix_input, verbose = TRUE)
+
+# Afficher la solution trouvée
+print("Matrice de solution :")
+print(result)
 ```
 
 <p>

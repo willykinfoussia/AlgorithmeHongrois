@@ -593,39 +593,6 @@ void step6(vector<vector<T>>& matrix, const vector<int>& row_cover, const vector
 
 
 /**
- * @brief Calcule la valeur de la solution trouvée par l'algorithme d'appariement maximal.
- * 
- * Cette fonction parcourt la matrice de masquage et la matrice originale en même temps. Pour chaque zéro étoilé dans la matrice de masquage, elle ajoute la valeur correspondante de la matrice originale à la solution.
- * 
- * @param original_matrix La matrice originale.
- * @param M La matrice de masquage.
- * @return La valeur de la solution trouvée.
- */
-int calculate_solution3(const vector<vector<int>>& original_matrix, const vector<vector<int>>& assignment_matrix)
-{
-    int result = 0; // Initialiser le résultat à 0
-    
-    // Parcourir chaque colonne de la matrice originale
-    for (unsigned column = 0; column < original_matrix.begin()->size(); ++column) {
-        // Parcourir chaque ligne de la matrice originale
-        for (unsigned row = 0; row < original_matrix.size(); ++row) {
-            // Vérifier si l'élément correspondant dans la matrice d'assignation est étoilé
-            if (assignment_matrix[row][column]) {
-                // Trouver la valeur correspondante dans la matrice originale
-                auto it_row = original_matrix.begin() + row;
-                auto it_column = it_row->begin() + column;
-                // Ajouter cette valeur à la solution
-                result += *it_column;
-                continue; // Passer à l'itération suivante
-            }
-        }
-    }
-    
-    return result; // Retourner la valeur de la solution trouvée
-}
-
-
-/**
  * @brief Implémente l'algorithme de l'Algorithme hongrois pour résoudre le problème d'association.
  * 
  * @param matrix La matrice d'entrée du problème.
