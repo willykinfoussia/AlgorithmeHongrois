@@ -1,5 +1,4 @@
 
-
 copy_matrix <- function(src, dst) {
   dst <- list()  # Effacer le contenu de la matrice de destination
   
@@ -65,6 +64,7 @@ reset_temporary_vectors <- function(vector_to_reset) {
   for (i in 1:length(vector_to_reset)) {
     vector_to_reset[i] <- 0  # Pour chaque élément du vecteur, assigner zéro
   }
+  return(vector_to_reset)
 }
 
 step2 <- function(matrix, M, RowCover, ColCover, step) {
@@ -83,11 +83,11 @@ step2 <- function(matrix, M, RowCover, ColCover, step) {
     }
   }
   
-  reset_temporary_vectors(RowCover)  # Réinitialiser le vecteur de couverture des lignes pour une utilisation ultérieure
-  reset_temporary_vectors(ColCover)  # Réinitialiser le vecteur de couverture des colonnes pour une utilisation ultérieure
+  RowCover <- reset_temporary_vectors(RowCover)  # Réinitialiser le vecteur de couverture des lignes pour une utilisation ultérieure
+  ColCover <- reset_temporary_vectors(ColCover)  # Réinitialiser le vecteur de couverture des colonnes pour une utilisation ultérieure
   
   step <- 3  # Passer à l'étape 3 de l'algorithme
-  return(list(step = step, matrix = matrix))
+  return(list(step = step, matrix = matrix, M = M, RowCover = RowCover, ColCover = ColCover))
 }
 
 step3 <- function(M, ColCover, step) {
@@ -113,10 +113,10 @@ step3 <- function(M, ColCover, step) {
   # Si toutes les colonnes sont couvertes
   if (covered_columns >= size) {
     step <- 7  # solution trouvée
-    return(list(step = step))
+    return(list(step = step, ColCover = ColCover))
   } else {
     step <- 4  # passer à l'étape 4 de l'algorithme
-    return(list(step = step))
+    return(list(step = step, ColCover = ColCover))
   }
 }
 
@@ -192,7 +192,7 @@ step4 <- function(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step) {
     if (row == -1) {  # Si aucun zéro non couvert n'est trouvé dans la matrice
       done <- TRUE  # Indiquer que la recherche est terminée
       step <- 6  # Passer à l'étape 6 de l'algorithme
-      return(list(step = step, row = NULL, col = NULL))
+      return(list(step = step, row = NULL, col = NULL, M = M,  RowCover = RowCover, ColCover = ColCover))
     } else {  # Si un zéro non couvert est trouvé dans la matrice
       M[row, col] <- 2  # Primariser ce zéro
       if (has_starred_zero_in_row(row, M)) {  # Si un zéro étoilé existe dans la ligne contenant ce zéro primarisé
@@ -204,7 +204,7 @@ step4 <- function(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step) {
         step <- 5  # Passer à l'étape 5 de l'algorithme
         path_row_0 <- row  # Sauvegarder l'indice de la ligne du zéro primarisé
         path_col_0 <- col  # Sauvegarder l'indice de la colonne du zéro primarisé
-        return(list(step = step, row = row, col = col))
+        return(list(step = step, row = row, col = col, M = M, RowCover = RowCover, ColCover = ColCover))
       }
     }
   }
@@ -212,11 +212,6 @@ step4 <- function(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step) {
 
 find_starred_zero_in_column <- function(col, M) {
   row <- -1  # Initialiser la ligne où le zéro étoilé est trouvé à -1 pour indiquer qu'aucun zéro étoilé n'a été trouvé
-  
-  print("M:")
-  print(M)
-  print("col:")
-  print(col)
   
   for (i in 1:nrow(M)) {  # Parcourir les lignes de la colonne spécifiée
     if (M[i, col] == 1) {  # Si un zéro étoilé est trouvé dans la colonne
@@ -249,6 +244,7 @@ augment_path <- function(path, path_count, M) {
       M[path[p, 1], path[p, 2]] <- 1  # Inverser son état (devient zéro marqué)
     }
   }
+  return(M)
 }
 
 erase_primes <- function(M) {
@@ -259,20 +255,13 @@ erase_primes <- function(M) {
       }
     }
   }
+  return(M)
 }
 
 step5 <- function(path, path_row_0, path_col_0, M, RowCover, ColCover, step) {
   r <- -1  # Initialiser l'indice de ligne à -1
   c <- -1  # Initialiser l'indice de colonne à -1
   path_count <- 1  # Initialiser le nombre de zéros dans la série à 1
-  
-  print("path")
-  print(path)
-  
-  print("path_row_0")
-  print(path_row_0)
-  print("path_col_0")
-  print(path_col_0)
   
   # Ajouter le zéro primarisé initial à la série
   path[path_count, 1] <- path_row_0
@@ -282,6 +271,7 @@ step5 <- function(path, path_row_0, path_col_0, M, RowCover, ColCover, step) {
   while (!done) {  # Tant que la série n'est pas terminée
     # Trouver un zéro étoilé dans la même colonne que le dernier zéro ajouté à la série
     r <- find_starred_zero_in_column(path[path_count, 2], M)
+    
     if (r > -1) {  # Si un zéro étoilé est trouvé dans la colonne
       # Ajouter ce zéro étoilé à la série
       path_count <- path_count + 1
@@ -302,46 +292,32 @@ step5 <- function(path, path_row_0, path_col_0, M, RowCover, ColCover, step) {
   }
   
   # Mettre à jour la matrice de masquage en fonction de la série
-  augment_path(path, path_count, M)
+  M <- augment_path(path, path_count, M)
   # Réinitialiser les couvertures des lignes et colonnes
-  reset_temporary_vectors(RowCover)
-  reset_temporary_vectors(ColCover)
+  RowCover <- reset_temporary_vectors(RowCover)
+  ColCover <- reset_temporary_vectors(ColCover)
   # Effacer tous les zéros primarisés dans la matrice de masquage
-  erase_primes(M)
+  M <- erase_primes(M)
   
   # Revenir à l'étape 3 de l'algorithme
   step <- 3
-  return(list(step = step))
+  return(list(step = step, M = M, RowCover = RowCover, ColCover = ColCover))
 }
 
-find_smallest <- function(minval, matrix, RowCover, ColCover) {
-  for (r in 1:length(matrix)) {  # Parcourir chaque ligne de la matrice
-    for (c in 1:length(matrix)) {  # Parcourir chaque colonne de la matrice
-      # Vérifier si la valeur à la position [r][c] est non couverte par les vecteurs de couverture
-      if (RowCover[r] == 0 && ColCover[c] == 0) {
-        # Si la valeur est plus petite que la valeur minimale actuelle, mettre à jour la valeur minimale
-        if (minval > matrix[[r]][[c]]) {
-          minval <- matrix[[r]][[c]]
-        }
-      }
-    }
-  }
-}
-
-step6 <- function(matrix, row_cover, col_cover, step) {
+step6 <- function(matrix, RowCover, ColCover, step) {
   # Trouver la plus petite valeur non couverte dans la matrice
-  min_value <- min(matrix[which(row_cover == 0), which(col_cover == 0)], na.rm = TRUE)
+  min_value <- min(matrix[which(RowCover == 0), which(ColCover == 0)], na.rm = TRUE)
   
   size <- nrow(matrix)
   # Parcourir chaque élément de la matrice
   for (r in 1:size) {
     for (c in 1:size) {
       # Si la ligne est couverte, ajouter la plus petite valeur non couverte à chaque élément de la ligne
-      if (row_cover[r] == 1) {
+      if (RowCover[r] == 1) {
         matrix[r, c] <- matrix[r, c] + min_value
       }
       # Si la colonne n'est pas couverte, soustraire la plus petite valeur non couverte à chaque élément de la colonne
-      if (col_cover[c] == 0) {
+      if (ColCover[c] == 0) {
         matrix[r, c] <- matrix[r, c] - min_value
       }
     }
@@ -355,7 +331,7 @@ step6 <- function(matrix, row_cover, col_cover, step) {
 # Fonction pour l'algorithme hongrois
 Hungarian_R <- function(matrix, verbose = FALSE) {
   # Copie de la matrice originale
-  original_matrix <- copy_matrix(matrix)
+  original_matrix <- matrix
   
   # Conversion de la matrice en une matrice carrée
   matrix <- adjust_matrix(matrix)
@@ -396,6 +372,9 @@ Hungarian_R <- function(matrix, verbose = FALSE) {
       result <- step2(matrix, M, RowCover, ColCover, step)
       step <- result$step
       matrix <- result$matrix
+      ColCover <- result$ColCover
+      RowCover <- result$RowCover
+      M <- result$M
       if (verbose) {
         print(matrix)
         print("----------Step : 2")
@@ -403,6 +382,7 @@ Hungarian_R <- function(matrix, verbose = FALSE) {
     }else if(step == 3){
       result <- step3(M, ColCover, step)
       step <- result$step
+      ColCover <- result$ColCover
       if (verbose) {
         print(matrix)
         print("----------Step : 3")
@@ -410,7 +390,10 @@ Hungarian_R <- function(matrix, verbose = FALSE) {
     }else if(step == 4){
       result <- step4(matrix, M, RowCover, ColCover, path_row_0, path_col_0, step)
       step <- result$step
-      if(is.null(result$row)){
+      M <- result$M
+      ColCover <- result$ColCover
+      RowCover <- result$RowCover
+      if(!is.null(result$row)){
         path_row_0 <- result$row
         path_col_0 <- result$col
       }
@@ -421,11 +404,15 @@ Hungarian_R <- function(matrix, verbose = FALSE) {
     }else if(step == 5){
       result <- step5(path, path_row_0, path_col_0, M, RowCover, ColCover, step)
       step <- result$step
+      M <- result$M
+      ColCover <- result$ColCover
+      RowCover <- result$RowCover
       if (verbose) {
         print(matrix)
         print("----------Step : 5")
       }
     }else if(step == 6){
+      
       result <- step6(matrix, RowCover, ColCover, step)
       step <- result$step
       matrix <- result$matrix
@@ -438,9 +425,9 @@ Hungarian_R <- function(matrix, verbose = FALSE) {
       M <- M[1:nrow(original_matrix), 1:ncol(original_matrix)]
       if (verbose) {
         print("Original Matrix:")
-        print_matrix(original_matrix)
+        print(original_matrix)
         print("Assignments Matrix:")
-        print_matrix(M)
+        print(M)
         print("----------Final Step : 7")
       }
       done <- TRUE

@@ -194,7 +194,9 @@ Cette fonction résout le problème d'affectation en générant toutes les permu
 <p>
 Cette fonction calcule le coût total d'une affectation donnée en fonction de la matrice d'association et de l'assignation. Elle initialise le coût total à zéro. Ensuite, elle parcourt chaque ligne de la matrice d'association. Pour chaque ligne, elle ajoute le coût de l'élément correspondant dans la matrice d'association selon l'assignation donnée. Enfin, elle retourne le coût total calculé.
 
-Exemple d'utilisation du package :
+Exemple d'utilisation des packages :
+
+- Package Rcpp :
 </p>
 
 ```{r}
@@ -206,6 +208,8 @@ cost_matrix <- list(
 naive_adj_matrix <- NaiveAlgorithme(cost_matrix)
 naive_adj_matrix
 ```
+
+- Package R :
 
 ```{r}
 # Exemple d'utilisation :
@@ -483,29 +487,33 @@ L'algorithme sort de la boucle une fois qu'une solution optimale est trouvée ou
 <p>
 Diverses fonctions auxiliaires sont utilisées pour effectuer des opérations spécifiques, telles que la recherche du plus petit élément dans une matrice, la recherche de zéros dans une matrice, la gestion des valeurs négatives, etc.
 
-Exemple d'utilisation du package :
+Exemple d'utilisation des packages:
+
+- Package Rcpp:
 </p>
 
 ```{r}
 cost_matrix <- list(
-  c(9, 1, 5),
-  c(1, 9, 7),
-  c(8, 1, 9)
+  c(9, 1, 5, 4),
+  c(1, 4, 7, 3),
+  c(8, 1, 6, 5),
+  c(8, 1, 6, 5)
 )
-hungarian_adj_matrix <- Hungarian(cost_matrix, verbose = TRUE)
+hungarian_adj_matrix <- Hungarian(cost_matrix, verbose = FALSE)
+
 hungarian_adj_matrix
 ```
 
+- Package R:
+
 ```{r}
 # Définir une matrice d'entrée
-matrix_input <- matrix(c(9, 1, 8, 1, 9, 1, 5, 7, 9), nrow = 3)
+matrix_input <- matrix(c(9, 1, 8, 8, 1, 1, 4, 1, 5, 7, 6, 6, 4, 3, 5, 5), nrow = 4)
 
-print(matrix_input[3, ])
 # Appliquer l'algorithme Hungarian
-result <- Hungarian_R(matrix_input, verbose = TRUE)
+result <- Hungarian_R(matrix_input, verbose = FALSE)
 
 # Afficher la solution trouvée
-print("Matrice de solution :")
 print(result)
 ```
 
@@ -593,14 +601,21 @@ generateCostMatrix <- function(n, k) {
   return(matrix)
 }
 
-cost_matrix <- generateCostMatrix(6, 4)
+ConvertMatrixListToMatrix <- function(matrixList){
+  return(matrix(unlist(matrixList), nrow = length(matrixList), byrow = TRUE))
+}
+
+cost_matrix <- ConvertMatrixListToMatrix(generateCostMatrix(6, 4))
 cat("Generated Matrix:\n")
 print(cost_matrix)
 ```
+
 Chaque algorithme est exécuté plusieurs fois afin d'obtenir une moyenne et un intervalle de confiance.
 
+- Test de l'algorithme Rcpp :
+
 ```{r}
-cost_matrix <- generateCostMatrix(1000, 100)
+cost_matrix <- generateCostMatrix(100, 10)
 
 # Nombre de fois à exécuter l'algorithme
 num_executions <- 100
@@ -632,15 +647,56 @@ cat("Intervalle de confiance (95%) :", mean_execution_time - confidence_interval
     "à", mean_execution_time + confidence_interval, "millisecondes\n")
 ```
 
+- Test de l'algorithme R :
+
+```{r}
+cost_matrix <- ConvertMatrixListToMatrix(generateCostMatrix(100, 10))
+
+# Nombre de fois à exécuter l'algorithme
+num_executions <- 100
+
+# Vecteur pour stocker les temps d'exécution
+execution_times <- numeric(num_executions)
+
+# Exécuter l'algorithme plusieurs fois et mesurer le temps d'exécution à chaque fois
+for (i in 1:num_executions) {
+  start_time <- Sys.time()
+  # Appeler la fonction pour exécuter l'algorithme hongrois
+  hungarian_adj_matrix <- Hungarian_R(cost_matrix)
+  end_time <- Sys.time()
+  execution_times[i] <- as.numeric(end_time - start_time, units = "secs") * 1000  # en millisecondes
+}
+
+# Calculer la moyenne des temps d'exécution
+mean_execution_time <- mean(execution_times)
+
+# Calculer l'écart type
+standard_deviation <- sd(execution_times)
+
+# Calculer l'intervalle de confiance à 95%
+confidence_interval <- 1.96 * (standard_deviation / sqrt(num_executions))
+
+# Afficher les résultats
+cat("Moyenne du temps d'exécution :", mean_execution_time, "millisecondes\n")
+cat("Intervalle de confiance (95%) :", mean_execution_time - confidence_interval,
+    "à", mean_execution_time + confidence_interval, "millisecondes\n")
+```
+
+
 Pour l'algorithme hongrois en R, nous observons approximativement :
 
-- Moyenne du temps d'exécution : 36.61147 millisecondes
-- Intervalle de confiance (95 %) : 34.08878 à 39.13415 millisecondes
+- Moyenne du temps d'exécution : 45.04352 millisecondes
+- Intervalle de confiance (95%) : 43.7405 à 46.34653 millisecondes
+
+Pour l'algorithme hongrois en Rcpp, nous observons approximativement :
+
+- Moyenne du temps d'exécution : 0.2169228 millisecondes
+- Intervalle de confiance (95%) : 0.1989332 à 0.2349123 millisecondes
 
 Tandis que pour l'algorithme hongrois en C++, nous obtenons environ :
 
-- Moyenne du temps d'exécution : 145.686 millisecondes
-- Intervalle de confiance (95 %) : [144.176, 147.197] millisecondes
+- Moyenne du temps d'execution : 0.79411 millisecondes
+- Intervalle de confiance (95%) : [0.343787, 1.24443] millisecondes
 
 Ces résultats mettent en évidence l'impact significatif de l'implémentation sur les performances des algorithmes, montrant clairement l'avantage de l'implémentation en R en termes de vitesse d'exécution.
 
