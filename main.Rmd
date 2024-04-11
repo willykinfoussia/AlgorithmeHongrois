@@ -3,7 +3,10 @@ title: Correspondance entre classes étiquettées et Clusters prédits par algor
   hongrois
 author: "Willy Kinfoussia, Aurélien Henriques"
 date: "2023-2024 M2DS"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -15,11 +18,11 @@ knitr::opts_chunk$set(echo = TRUE)
 </p>
 
 <p>
-Un problème notable dans l’apprentissage supervisé est la labélisation d’un grand nombre de données afin d’entraîner un modèle. En effet, Il arrive souvent que le nombre de données labelisées soit dérisoire comparément aux données dont l’on dispose au total. Certains algorithmes, par exemple l'algorithme SWAV, permettent de s'affranchir de ce problème en créant une représentation de classe par alteration faible des exemples labélisés, mais ils nécessitent un apprentissage contrastif afin de pouvoir identifier une classe. 
+Un problème notable dans l’apprentissage supervisé est la labélisation d’un grand nombre de données afin d’entraîner un modèle. En effet, Il arrive souvent que le nombre de données labelisées soit dérisoire comparément aux données dont l’on dispose au total. Certains algorithmes, par exemple l'algorithme SWAV, permettent de s'affranchir de ce problème en créant une représentation de classe par alteration faible des données labélisés, mais ils nécessitent un apprentissage contrastif afin de pouvoir identifier une classe. 
 </p>
 
 <p>
-Les algorithmes de clusterisation non-supervisé peuvent alors permettre de résoudre ce problème, en clusterisant les données par cluster pourvu que nous puissions identifier correctement les clusters aux étiquettes de classe. Dans ce cas, il suffirait alors de s’assurer de la bonne représentation du modèle des différentes classes via les clusters, et d’apposer aux données des clusters les étiquettes de classe issue de l’association cluster/classe.
+Les algorithmes de clusterisation non-supervisé peuvent alors permettre de résoudre ce problème, en clusterisant les données pourvu que nous puissions identifier correctement les clusters aux étiquettes de classe. Dans ce cas, il suffirait alors de s’assurer de la bonne représentation du modèle des différentes classes via les clusters, et d’apposer aux données des clusters les étiquettes de classe issue de l’association cluster/classe.
 </p>
 
 
@@ -245,15 +248,17 @@ La complexité de l'algorithme naïf est de O(n!), où n est la taille de la mat
 </p>
 
 <p>
-Ainsi, la complexité totale de l'algorithme naïf est de O(n!), car la génération de toutes les permutations possibles et le calcul du coût pour chaque permutation contribuent tous deux à cette complexité. Cette approche est pratique pour de petites tailles de matrices, mais devient rapidement inefficace pour des tailles de problèmes plus importantes en raison de sa complexité exponentielle.
+Ainsi, la complexité totale de l'algorithme naïf est de O(n!), car la génération de toutes les permutations possibles et le calcul du coût pour chaque permutation contribuent tous deux à cette complexité. Cette approche est pratique pour de petites tailles de matrices, mais devient rapidement inefficace pour des tailles de problèmes plus importantes en raison de sa complexité.
 </p>
 
 <p>
-## Complexité expérimentale
+## Complexité expérimentale (RCPP)
 </p>
 
 ```{r}
 temps_execution <- function(n_liste,p,algo) {
+  #n_liste correspond aux dimensions des matrtices de couts générées,
+  #p correspond au nombre de fois oû l'on exécute l'algorithme pour ensuite moyenner le temps
 
   temps <- numeric(length(n_liste))
   
@@ -274,62 +279,132 @@ temps_execution <- function(n_liste,p,algo) {
 }
 ```
 
-Pour obtenir la complexité, on détermine la régression log(T)=f(n*log(n)-n) où l'on a utilisé la formule de stirling par simplicité:
+Pour obtenir la complexité, on détermine la régression log(T)=log(n!). Avoir un coefficient de régression de 1 signifierait que l'on a bien la même complexité que celle théorique. 
 
 ```{r}
-liste_dimension <- seq(from = 5, to = 12, by = 1)
+liste_dimension <- seq(from = 6, to = 12, by = 1)
 
-logn_n <- (log(liste_dimension)-1)*liste_dimension
+logn_factorielle <- log(factorial(liste_dimension))
 
 temps_exe <- log(temps_execution(liste_dimension,5,NaiveAlgorithme)) 
 
-plot(log(liste_dimension),temps_exe,xlab='log(nombre de classes)',ylab='log(temps)')
-
-reg <- lm(temps_exe~logn_n)
+reg <- lm(temps_exe~logn_factorielle)
 
 summary(reg)
+
+plot(logn_factorielle,temps_exe,xlab='log(nombre de classes)',ylab='log(temps)')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle*coef(reg)[2],lty='dashed')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle,col='red',lty='dashed')
+legend("right", legend = "Complexité théorique", col = "red", pch = 1)
+legend("topleft", legend = "Régression", col = "blue", pch = 1)
 
 print(coef(reg)[2])
 ```
 
-La régression donne des valeurs proches de 1 (0.88-0.94) avec un R^2>0.88. Ainsi, on a bien une complexité en N! par équivalence avec n*log(n)-n. 
+
+La régression donne des valeurs très proches de 1 avec un R^2=0.99. Ainsi, on a bien une complexité en N!. 
+
+<p>
+## Complexité expérimentale (R)
+</p>
+Vérifions maintenant que c'est aussi le cas pour l'algorithme en R:
+
+```{r}
+
+temps_execution_R <- function(n_liste,p,algo) {
+  #n_liste correspond aux dimensions des matrtices de couts générées,
+  #p correspond au nombre de fois oû l'on exécute l'algorithme pour ensuite moyenner le temps
+
+  temps <- numeric(length(n_liste))
+  
+  for (j in seq_along(n_liste)) {
+    n <- n_liste[j]
+    cout <- matrix(unlist(matrice_couts(n)), nrow = n, byrow = TRUE)
+    
+    start_time <- Sys.time()
+    
+    for (i in 0:(p-1)) {
+    algo(cout)
+    }
+    
+    end_time <- Sys.time()
+    temps[j] <- (end_time - start_time)/p
+  }
+  return(temps)
+}
+```
+
+```{r}
+
+liste_dimension <- seq(from = 2, to = 7, by = 1)
+
+logn_factorielle <- log(factorial(liste_dimension))
+
+temps_exe_R <- temps_execution_R(liste_dimension,5,NaiveAlgorithme_R)
+
+log_temps_R <- log(temps_exe_R)
+
+reg <- lm(log_temps_R~logn_factorielle)
+
+summary(reg)
+
+print(coef(reg)[2])
+
+plot(logn_factorielle,log_temps_R,xlab='log(nombre de classes)',ylab='log(temps)')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle*coef(reg)[2],lty='dashed')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle,col='red',lty='dashed')
+legend("right", legend = "Complexité théorique", col = "red", pch = 1)
+legend("topleft", legend = "Régression", col = "blue", pch = 1)
+
+
+```
+A nouveau, le coefficient de régression est proche de 1 avec un R^2=0.98. La complexité expérimentale obtenu avec les deux algorithmes est donc similaire, et en accord avec la complexité théorique en N!. 
+
+<p>
+# Vitesse R vs RCPP
+</p>
+
+```{r}
+
+# on a défini précédemment temps_exe_R <- temps_execution_R(liste_dimension,5,NaiveAlgorithme_R)
+vitesse_cpp<-temps_execution(liste_dimension,5,NaiveAlgorithme)
+
+print(vitesse_cpp)
+print(temps_exe_R)
+
+plot(liste_dimension,temps_exe_R/vitesse_cpp,xlab='dimension',ylab='ratio des temps d"exécution',main='temps d"éxécution R/temps d"execution C++')
+
+```
+
+On constate une différence de magnitude dans les temps d'éxécution: comme attendu, le temps d'execution de c++ est beaucoup plus performant. A partir de 4 classes/clusters, le facteur entre les deux devient de l'ordre du millier, ce qui révèle l'utilité de C++ dans notre cas. 
 
 <p>
 # Algorithme Hongrois
 </p>
 
 <p>
-L'algorithme hongrois, également connu sous le nom de méthode hongroise ou algorithme de Kuhn-Munkres, est un algorithme utilisé pour résoudre le problème d'affectation, qui consiste à trouver la meilleure correspondance entre deux ensembles d'éléments, tout en minimisant le coût total de cette affectation.
+- Étape 1 : Soustraire le minimum de chaque ligne à tous les éléments de cette ligne, puis soustraire le minimum de chaque colonne à tous les éléments de cette colonne dans la matrice de coût.
 </p>
 
 <p>
-- Étape 0 : Soustraire le minimum de chaque ligne à tous les éléments de cette ligne, puis soustraire le minimum de chaque colonne à tous les éléments de cette colonne dans la matrice de coût.
+- Étape 2 : Sélectionner le maximum de zéros indépendants, c'est-à-dire un seul zéro par ligne et par colonne, en parcourant tous les zéros non sélectionnés et en les sélectionnant s'ils ne partagent pas la même ligne ou colonne qu'un zéro déjà sélectionné.
 </p>
 
 <p>
-- Étape 1 : Sélectionner le maximum de zéros indépendants, c'est-à-dire un seul zéro par ligne et par colonne, en parcourant tous les zéros non sélectionnés et en les sélectionnant s'ils ne partagent pas la même ligne ou colonne qu'un zéro déjà sélectionné.
+- Étape 3-4-5 : Couvrir chaque colonne ayant un zéro sélectionné. Puis, pour chaque zéro non couvert, marquer la colonne de ce zéro et couvrir la ligne de ce zéro si aucune colonne n'est marquée pour ce zéro. Répéter jusqu'à ce qu'il n'y ait plus de zéros non couverts.
 </p>
 
 <p>
-- Étape 2 : Couvrir chaque colonne ayant un zéro sélectionné. Puis, pour chaque zéro non couvert, marquer la colonne de ce zéro et couvrir la ligne de ce zéro si aucune colonne n'est marquée pour ce zéro. Répéter jusqu'à ce qu'il n'y ait plus de zéros non couverts.
+- Étape 6 : Trouver la valeur minimum des éléments non couverts dans la matrice. Ajouter cette valeur à toutes les lignes couvertes et la retirer à toutes les colonnes non couvertes. Recommencer à l'étape 1
 </p>
 
-<p>
-- Étape 3 : Trouver la valeur minimum des éléments non couverts dans la matrice. Ajouter cette valeur à toutes les lignes couvertes et la retirer à toutes les colonnes non couvertes. Recommencer à l'étape 1
-</p>
+L'itération de ces étapes permet de s'assurer que tout les chemins potentiellement optimaux sont explorés avant d'en choisir un. En effet, les étapes permettent de séléctionner un chemin et de s'assurer que celui-ci minimise la somme des coefficients séléctionnés par rapport au précédent puisque la matrice  résultante à l'étape 6 est réutilisé pour le chemin suivant. L'algorithme sort de la boucle une fois qu'une solution optimale est trouvée, c'est-à-dire que réitérer les étapes n'a plus d'utilité.
 
-<p>
-## Explication détaillée de l'algorithme :
-</p>
 
 ```{r}
 sourceCpp("Hungarian.cpp")
 source("Hungarian.R")
 ```
-
-<p>
-Voici une explication complète du fonctionnement de l'algorithme hongrois :
-</p>
 
 <p>
 ### Initialisation :
@@ -339,63 +414,7 @@ La fonction Hungarian est appelée, prenant en entrée une matrice de coûts mat
 
 La fonction adjust_matrix est utilisée pour rendre la matrice d'entrée carrée en ajoutant des zéros aux rangées ou aux colonnes supplémentaires si nécessaire.
 
-Des vecteurs temporaires sont initialisés pour suivre les affectations et les couvertures de lignes et de colonnes. La matrice M est initialisée pour stocker les affectations (zéros étoilés et zéros primés).
-</p>
-
-<p>
-### Itération à travers les étapes de l'algorithme :
-</p>
-<p>
-- Étape 1 - Initialisation :
-</p>
-<p>
-L'algorithme commence par l'étape 1, où il effectue des ajustements sur la matrice d'entrée pour garantir qu'elle soit carrée. Il soustrait le minimum de chaque ligne de la matrice et le minimum de chaque colonne, de sorte que dans chaque ligne et chaque colonne, il y ait au moins un zéro. Cela crée une configuration initiale pour l'algorithme.
-</p>
-
-<p>
-- Étape 2 - Étoiles dans la matrice :
-</p>
-<p>
- À l'étape 2, l'algorithme cherche des zéros non couverts dans la matrice d'entrée. Si un zéro est trouvé, il est étoilé (marqué). Les lignes et les colonnes contenant ces zéros étoilés sont ensuite couvertes (marquées). L'algorithme continue à chercher des zéros non couverts jusqu'à ce qu'il n'y en ait plus.
-</p>
-
-<p>
-- Étape 3 - Couvertures des colonnes :
-</p>
-<p>
-À l'étape 3, l'algorithme examine les zéros étoilés dans chaque colonne de la matrice. Si une colonne contient un zéro étoilé, cette colonne est couverte. L'algorithme continue à parcourir les colonnes jusqu'à ce que toutes les colonnes contenant des zéros étoilés soient couvertes.
-</p>
-
-<p>
-- Étape 4 - Chemins augmentants :
-</p>
-<p>
-À l'étape 4, l'algorithme cherche à construire des chemins alternés (chemins augmentants) à travers les zéros étoilés et primés dans la matrice. Ces chemins sont utilisés pour effectuer des changements dans les affectations et sont un aspect clé de l'algorithme. L'algorithme peut construire plusieurs chemins alternés à partir de zéros étoilés et primés.
-</p>
-
-<p>
-- Étape 5 - Mise à jour des affectations :
-</p>
-<p>
-À l'étape 5, l'algorithme met à jour les affectations en utilisant les chemins alternés construits à l'étape précédente. Les zéros étoilés sont transformés en zéros primés, et les zéros primés sont transformés en zéros étoilés. Ensuite, les lignes et les colonnes sont à nouveau couvertes.
-</p>
-
-<p>
-- Étape 6 - Réduction des coûts :
-</p>
-<p>
-À l'étape 6, l'algorithme réduit les coûts dans la matrice d'entrée en ajoutant ou en soustrayant une valeur spécifique à chaque élément. Cette valeur est déterminée en fonction des zéros étoilés et primés et des lignes et colonnes couvertes. L'objectif est de rendre la matrice plus propice à la recherche de nouvelles affectations.
-</p>
-
-<p>
-### Fin de l'itération :
-</p>
-<p>
-Une fois toutes les étapes terminées, l'algorithme vérifie s'il a trouvé une solution optimale. S'il n'y a plus de changements à apporter aux affectations, cela signifie qu'une solution optimale a été trouvée, et l'algorithme se termine. Sinon, il retourne à l'étape 3 et continue l'itération.   
-</p>
-
-<p>
-L'algorithme sort de la boucle une fois qu'une solution optimale est trouvée ou qu'il n'y a plus d'étapes à exécuter.
+Des vecteurs temporaires sont initialisés pour suivre les affectations et les couvertures de lignes et de colonnes. La matrice M est initialisée pour stocker les affectations (zéros couverts et marqués).
 </p>
 
 <p>
@@ -488,17 +507,19 @@ liste_dimension <- seq(from = 10, to = 450, by = 20)
 
 temps_exe_hong <- log(temps_execution(liste_dimension,5,Hungarian))
 
-plot(log(liste_dimension),temps_exe_hong,xlab='log(nombre de classes)',ylab='log(temps')
-
 reg <- lm(temps_exe_hong~log(liste_dimension))
 
 summary(reg)
 
-print("complexité polynomiale :")
+plot(log(liste_dimension),temps_exe_hong,xlab='log(nombre de classes)',ylab='log(temps)')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle*coef(reg)[2],lty='dashed')
+lines(logn_factorielle,coef(reg)[1]+logn_factorielle*3,col='red',lty='dashed')
+legend("right", legend = "Complexité théorique", col = "red", pch = 1)
+legend("topleft", legend = "Régression", col = "blue", pch = 1)
 
 print(coef(reg)[2])
 ```
-
+La complexité expérimentale est là encore en accord avec la complexité théorique: nous avons bien un coefficient directeur proche de 3 avec un R^2 solide, ce qui indique une complexité en N^3. 
 
 <p>
 # Comparaison de vitesse R et C++
@@ -529,7 +550,9 @@ print(cost_matrix)
 
 Chaque algorithme est exécuté plusieurs fois afin d'obtenir une moyenne et un intervalle de confiance.
 
-- Test de l'algorithme Rcpp :
+<p>
+# Test de l'algorithme Rcpp
+</p>
 
 ```{r}
 cost_matrix <- generateCostMatrix(100, 10)
@@ -560,11 +583,14 @@ confidence_interval <- 1.96 * (standard_deviation / sqrt(num_executions))
 
 # Afficher les résultats
 cat("Moyenne du temps d'exécution :", mean_execution_time, "millisecondes\n")
-cat("Intervalle de confiance (95%) :", mean_execution_time - confidence_interval,
-    "à", mean_execution_time + confidence_interval, "millisecondes\n")
+cat("Intervalle de confiance (95%) : [", mean_execution_time - confidence_interval,
+    ",", mean_execution_time + confidence_interval, "] millisecondes\n")
 ```
 
-- Test de l'algorithme R :
+
+<p>
+# Test de l'algorithme R
+</p>
 
 ```{r}
 cost_matrix <- ConvertMatrixListToMatrix(generateCostMatrix(100, 10))
@@ -624,13 +650,12 @@ Ces résultats mettent en évidence l'impact significatif de l'implémentation s
 <p>
 On utilise les clusters associés aux classes pour prédire le test de mnist. Pour ce faire, nous utilisons la matrice d'assignation classe/cluster obtenue pour assigner les classes aux clusters prédits par l'algorithme des k-means. Nous comparons ensuite avec la vraie classe des données test mnist avec celle prédite par cette association. 
 
-##
 
 ```{r}
 # matrice bijection classes/clusters trouvés par l'algorithme hongrois
 assignation <- Hungarian(cost_matrix_mnist)
 
- # version liste de la bijection
+# version liste de la bijection
 association <-numeric(k)
 
 for (i in seq_along(assignation)) {
@@ -646,5 +671,11 @@ précision <- mean(assignement_classe != y_train) * 100
 print(précision)
 ```
 
-Nous obtenons une efficacité supérieure à 90%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captées par 
-l'algorithme kmeans que l'algorithme hongrois permet de trouver une association cohérente entre les clusters et les classes.
+Nous obtenons une efficacité supérieure à 95%. Nous pouvons donc supposer au-dela du fait que la structure des classes est bien captée par 
+l'algorithme kmeans que l'algorithme hongrois permet de trouver une association cohérente entre les clusters et les classes. On peut donc potentiellement se reposer sur celui-ci pour labeliser de nouvelles données après clusterisations. 
+
+<p>
+# Conclusion
+</p>
+
+Nous avons pu appliquer l'algorithme hongrois à l'association de classes de données et de clusters prédits par kmean. pour ceci, nous avons défini une matrice de coût basée sur la distance euclidienne entre centroîdes des classes et des clusters puis nous avons appliquer un algorithme naîf de résolution de l'association qui s'est averé très demandeur en ressources du fait de sa complexité factorielle. Nous avons donc appliquer l'algorithme hongrois qui réduit la complexité à une puissance polynomiale de la dimension et avons pu remarquer qu'utiliser RCPP était largement avantageux en terme de rapidité. Enfin, une comparaison entre les associations obtenues et les classes réelles ont montrées que l'algorithme hongrois permettait effectivement de trouver une solution optimale. 
